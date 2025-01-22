@@ -3,6 +3,8 @@ import { Geist, Geist_Mono } from "next/font/google"
 
 import "./globals.css"
 
+import { ClerkProvider } from "@clerk/nextjs"
+
 import { ThemeProvider } from "@/components/theme-provider"
 
 const geistSans = Geist({
@@ -16,8 +18,12 @@ const geistMono = Geist_Mono({
 })
 
 export const metadata: Metadata = {
-  title: "Next template",
-  description: "Let's start building",
+  title: {
+    template: "%s - ResumAI",
+    absolute: "ResumAI",
+  },
+  description:
+    "ResumAI allows you to harness the power of AI to build the resume which will get you the job of your dreams.",
 }
 
 export default function RootLayout({
@@ -26,19 +32,21 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
+    <ClerkProvider>
+      <html lang="en" suppressHydrationWarning>
+        <body
+          className={`${geistSans.variable} ${geistMono.variable} antialiased`}
         >
-          {children}
-        </ThemeProvider>
-      </body>
-    </html>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
+            {children}
+          </ThemeProvider>
+        </body>
+      </html>
+    </ClerkProvider>
   )
 }

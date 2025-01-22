@@ -14,11 +14,29 @@ datasource db {
 }
 
 model User {
-    id        String    @id @default(cuid())
-    email     String    @unique
-    firstName String
-    lastName  String
-    imageUrl  String?
+  id        String   @id @default(cuid())
+  email     String   @unique
+  firstName String
+  lastName  String
+  imageUrl  String?
+  resumes   Resume[]
+}
 
-    @@map("users")
+model Resume {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  photoUrl    String?
+  colorHex    String   @default("#000000")
+  borderStyle String   @default("squircle")
+  summary     String?
+  firstName   String?
+  lastName    String?
+  jobTitle    String?
+  city        String?
+  country     String?
+  phone       String?
+  email       String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }
