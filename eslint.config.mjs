@@ -6,38 +6,35 @@ const compat = new FlatCompat({
 })
 
 const eslintConfig = [
-  ...compat.config(
-    {
-      extends: [
-        "next",
-        "next/core-web-vitals",
-        "next/typescript",
-        "plugin:prettier/recommended",
-        "plugin:jsx-a11y/recommended",
-        "plugin:import/recommended",
+  ...compat.config({
+    extends: [
+      "next",
+      "next/core-web-vitals",
+      "next/typescript",
+      "plugin:prettier/recommended",
+      "plugin:jsx-a11y/recommended",
+      "plugin:import/recommended",
+    ],
+    plugins: ["prettier", "jsx-a11y"],
+    rules: {
+      "@typescript-eslint/no-unused-vars": [
+        "error",
+        {
+          argsIgnorePattern: "^_",
+          ignoreRestSiblings: true,
+        },
       ],
-      plugins: ["prettier", "jsx-a11y"],
-      rules: {
-        "@typescript-eslint/no-unused-vars": [
-          "warn",
-          {
-            argsIgnorePattern: "^_",
-          },
-        ],
-        "jsx-a11y/alt-text": "warn",
-        "jsx-a11y/aria-props": "warn",
-        "jsx-a11y/aria-proptypes": "warn",
-        "jsx-a11y/aria-unsupported-elements": "warn",
-        "jsx-a11y/role-has-required-aria-props": "warn",
-        "jsx-a11y/role-supports-aria-props": "warn",
-        "prettier/prettier": "error",
-        "react/react-in-jsx-scope": "off",
-      },
+      "import/named": "off",
+      "jsx-a11y/alt-text": "warn",
+      "jsx-a11y/aria-props": "warn",
+      "jsx-a11y/aria-proptypes": "warn",
+      "jsx-a11y/aria-unsupported-elements": "warn",
+      "jsx-a11y/role-has-required-aria-props": "warn",
+      "jsx-a11y/role-supports-aria-props": "warn",
+      "prettier/prettier": "error",
+      "react/react-in-jsx-scope": "off",
     },
-    {
-      ignores: ["node_modules", "src/components/ui"],
-    },
-  ),
+  }),
 ]
 
 export default eslintConfig
