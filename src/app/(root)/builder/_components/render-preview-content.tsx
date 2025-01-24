@@ -7,7 +7,8 @@ import { formatDate } from "date-fns"
 import { cn } from "@/lib/utils"
 import { useDimensions } from "@/hooks/use-dimensions"
 import { Badge } from "@/components/ui/badge"
-import { Separator } from "@/components/ui/separator"
+
+import { BORDER_STYLES } from "./border-picker"
 
 interface RenderPreviewContentProps {
   className?: string
@@ -75,14 +76,19 @@ function PersonalInfoHeader() {
           height={100}
           alt="Author photo"
           className="aspect-square object-cover"
+          style={{
+            borderRadius:
+              borderStyle === BORDER_STYLES.SQUARE
+                ? "0px"
+                : borderStyle === BORDER_STYLES.CIRCLE
+                  ? "999px"
+                  : "16px",
+          }}
         />
       )}
-      <div className="space-y-2 5">
-        <div className="space-y-1">
-          <p
-            className="text-2xl font-bold"
-            style={{ color: colorHex }}
-          >{`${firstName} ${lastName}`}</p>
+      <div className="space-y-3">
+        <div style={{ color: colorHex }}>
+          <p className="text-2xl font-bold">{`${firstName} ${lastName}`}</p>
           <p className="font-medium">{jobTitle}</p>
         </div>
         <p className="text-xs text-gray-500">
@@ -115,7 +121,7 @@ function SummarySection() {
 
 function WorkExperienceSection() {
   const { resumeData } = useResumeBuilderStore()
-  const { workExperiences } = resumeData
+  const { workExperiences, colorHex } = resumeData
 
   const filledWorkExperiences = getFilledArray(workExperiences)
 
@@ -131,7 +137,10 @@ function WorkExperienceSection() {
             key={`work-exp-${index}`}
             className="break-inside-avoid space-y-1"
           >
-            <div className="flex items-center justify-between text-sm font-semibold">
+            <div
+              className="flex items-center justify-between text-sm font-semibold"
+              style={{ color: colorHex }}
+            >
               <span>{exp.position}</span>
               {exp.startDate && (
                 <span>
@@ -152,7 +161,7 @@ function WorkExperienceSection() {
 
 function EducationSection() {
   const { resumeData } = useResumeBuilderStore()
-  const { educations } = resumeData
+  const { educations, colorHex } = resumeData
 
   const filledEducations = getFilledArray(educations)
 
@@ -168,7 +177,10 @@ function EducationSection() {
             key={`work-exp-${index}`}
             className="break-inside-avoid space-y-1"
           >
-            <div className="flex items-center justify-between text-sm font-semibold">
+            <div
+              className="flex items-center justify-between text-sm font-semibold"
+              style={{ color: colorHex }}
+            >
               <span>{edu.degree}</span>
               {edu.startDate && (
                 <span>
@@ -190,7 +202,7 @@ function EducationSection() {
 
 function SkillsSection() {
   const { resumeData } = useResumeBuilderStore()
-  const { skills, colorHex } = resumeData
+  const { skills, colorHex, borderStyle } = resumeData
 
   if (!skills?.length) return
 
@@ -206,6 +218,12 @@ function SkillsSection() {
               className="text-white rounded-md cursor-default"
               style={{
                 backgroundColor: colorHex,
+                borderRadius:
+                  borderStyle === BORDER_STYLES.SQUARE
+                    ? "0px"
+                    : borderStyle === BORDER_STYLES.CIRCLE
+                      ? "999px"
+                      : "8px",
               }}
             >
               {skill}
@@ -222,9 +240,7 @@ function SectionSeparator() {
     resumeData: { colorHex },
   } = useResumeBuilderStore()
 
-  return (
-    <Separator className="h-1 mb-3" style={{ backgroundColor: colorHex }} />
-  )
+  return <hr className="border-b-2 mb-3" style={{ borderColor: colorHex }} />
 }
 
 function SectionTitle({ children }: { children: React.ReactNode }) {
