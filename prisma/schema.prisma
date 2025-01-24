@@ -13,19 +13,9 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
-  id        String   @id @default(cuid())
-  email     String   @unique
-  firstName String
-  lastName  String
-  imageUrl  String?
-  resumes   Resume[]
-}
-
 model Resume {
   id          String   @id @default(cuid())
   userId      String
-  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   photoUrl    String?
   colorHex    String   @default("#000000")
   borderStyle String   @default("squircle")
@@ -39,4 +29,24 @@ model Resume {
   email       String?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+
+  workExperiences WorkExperience[]
+
+  @@map("resumes")
+}
+
+model WorkExperience {
+  id String @id @default(cuid())
+  position String?
+  company String?
+  startDate DateTime?
+  endDate DateTime?
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  resumeId String
+  resume Resume @relation(fields: [resumeId], references: [id], onDelete: Cascade)
+
+  @@map("workExperiences")
 }
