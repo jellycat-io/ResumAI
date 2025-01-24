@@ -1,9 +1,11 @@
 "use client"
 
+import { useState } from "react"
 import { useSearchParams } from "next/navigation"
 
 import { useResumeBuilderStore } from "@/store/use-resume-builder-store"
 
+import { cn } from "@/lib/utils"
 import { Separator } from "@/components/ui/separator"
 
 import { BUILDER_STEPS } from "../steps"
@@ -12,6 +14,7 @@ import { Footer } from "./footer"
 import { RenderPreview } from "./render-preview"
 
 export function ResumeBuilder() {
+  const [showSmResumePreview, setShowSmResumePreview] = useState(false)
   const { currentStep, setCurrentStep } = useResumeBuilderStore()
   const searchParams = useSearchParams()
 
@@ -43,15 +46,25 @@ export function ResumeBuilder() {
       </header>
       <main className="relative grow">
         <div className="absolute inset-0 flex w-full">
-          <section className="w-full md:w-1/2 p-6 overflow-y-auto space-y-6">
+          <section
+            className={cn(
+              "w-full md:w-1/2 md:flex p-6 overflow-y-auto space-y-6",
+              showSmResumePreview && "hidden",
+            )}
+          >
             <Breadcrumbs currentStep={urlStep} setCurrentStep={setStep} />
             {FormComponent && <FormComponent />}
           </section>
           <Separator orientation="vertical" className="grow" />
-          <RenderPreview />
+          <RenderPreview className={cn(showSmResumePreview && "flex")} />
         </div>
       </main>
-      <Footer currentStep={urlStep} setCurrentStep={setStep} />
+      <Footer
+        currentStep={urlStep}
+        setCurrentStep={setStep}
+        showSmResumePreview={showSmResumePreview}
+        setShowSmResumePreview={setShowSmResumePreview}
+      />
     </div>
   )
 }

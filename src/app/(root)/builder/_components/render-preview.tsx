@@ -2,19 +2,24 @@
 
 import { useResumeBuilderStore } from "@/store/use-resume-builder-store"
 
+import { cn } from "@/lib/utils"
+
 import { BorderPicker } from "./border-picker"
 import { ColorPicker } from "./color-picker"
 import { RenderPreviewContent } from "./render-preview-content"
 
 interface RenderPreviewProps {
   showDebug?: boolean
+  className?: string
 }
 
-export function RenderPreview({ showDebug }: RenderPreviewProps) {
+export function RenderPreview({ showDebug, className }: RenderPreviewProps) {
   const { resumeData } = useResumeBuilderStore()
 
   return (
-    <section className="group relative hidden w-1/2 md:flex">
+    <section
+      className={cn("group relative hidden w-full md:w-1/2 md:flex", className)}
+    >
       <div className="absolute top-1 left-1 flex flex-col gap-3 flex-none lg:top-3 lg:left-3 opacity-50 xl:opacity-100 group-hover:opacity-100">
         <ColorPicker />
         <BorderPicker />
