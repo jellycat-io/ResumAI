@@ -34,15 +34,13 @@ export type PersonalInfoValues = z.infer<typeof personalInfoSchema>
 export const workExperienceSchema = z.object({
   workExperiences: z
     .array(
-      z
-        .object({
-          position: optionalString,
-          company: optionalString,
-          startDate: z.date().optional(),
-          endDate: z.date().optional(),
-          description: optionalString,
-        })
-        .optional(),
+      z.object({
+        position: optionalString,
+        company: optionalString,
+        startDate: z.date().optional(),
+        endDate: z.date().optional(),
+        description: optionalString,
+      }),
     )
     .optional(),
 })
@@ -52,15 +50,13 @@ export type WorkExperienceValues = z.infer<typeof workExperienceSchema>
 export const educationSchema = z.object({
   educations: z
     .array(
-      z
-        .object({
-          degree: optionalString,
-          school: optionalString,
-          startDate: z.date().optional(),
-          endDate: z.date().optional(),
-          description: optionalString,
-        })
-        .optional(),
+      z.object({
+        degree: optionalString,
+        school: optionalString,
+        startDate: z.date().optional(),
+        endDate: z.date().optional(),
+        description: optionalString,
+      }),
     )
     .optional(),
 })
@@ -86,6 +82,8 @@ export const resumeSchema = z.object({
   ...educationSchema.shape,
   ...skillSchema.shape,
   ...summarySchema.shape,
+  colorHex: optionalString,
+  borderStyle: optionalString,
 })
 
 export type ResumeValues = Omit<z.infer<typeof resumeSchema>, "photo"> & {
@@ -94,5 +92,5 @@ export type ResumeValues = Omit<z.infer<typeof resumeSchema>, "photo"> & {
 }
 
 function isImageMimeType(type: Blob["type"]) {
-  return type === "image/png" || type === "image/png"
+  return type === "image/jpeg" || type === "image/png"
 }

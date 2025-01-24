@@ -11,7 +11,24 @@ interface ResumeBuilderState {
 }
 
 export const useResumeBuilderStore = create<ResumeBuilderState>((set) => ({
-  resumeData: {},
+  resumeData: {
+    title: "",
+    description: "",
+    firstName: "",
+    lastName: "",
+    jobTitle: "",
+    photo: "",
+    city: "",
+    country: "",
+    phone: "",
+    email: "",
+    workExperiences: [],
+    educations: [],
+    skills: [],
+    summary: "",
+    colorHex: "#000000",
+    borderStyle: "squircle",
+  },
   currentStep: "",
 
   setResumeData: (data: ResumeValues) => {

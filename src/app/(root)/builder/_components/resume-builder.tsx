@@ -34,7 +34,7 @@ export function ResumeBuilder() {
 
   return (
     <div className="flex grow flex-col">
-      <header className="space-y-1.5 px-3 py-5 text-center">
+      <header className="space-y-1.5 px-3 py-5 text-center border-b">
         <h1 className="text-2xl font-bold">Design Your Resume</h1>
         <p className="text-sm text-muted-foreground">
           Follow the steps below to create your resume. Your progress will be
@@ -48,7 +48,7 @@ export function ResumeBuilder() {
             {FormComponent && <FormComponent />}
           </section>
           <Separator orientation="vertical" className="grow" />
-          <RenderPreview showDebug />
+          <RenderPreview />
         </div>
       </main>
       <Footer currentStep={urlStep} setCurrentStep={setStep} />
