@@ -1,5 +1,6 @@
 import { BuilderFormProps } from "@/lib/types"
 
+import { EducationForm } from "./_components/education-form"
 import { GeneralInfoForm } from "./_components/general-info-form"
 import { PersonalInfoForm } from "./_components/personal-info-form"
 import { WorkExperienceForm } from "./_components/work-experience-form"
@@ -15,5 +16,10 @@ export const BUILDER_STEPS: {
     title: "Work Experience",
     component: WorkExperienceForm,
     key: "work-experience",
+  },
+  {
+    title: "Education",
+    component: EducationForm,
+    key: "educations",
   },
 ]

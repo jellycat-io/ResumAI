@@ -7,7 +7,7 @@ import { GripHorizontalIcon, PlusIcon, Trash2Icon } from "lucide-react"
 import { useFieldArray, useForm, UseFormReturn } from "react-hook-form"
 
 import { BuilderFormProps } from "@/lib/types"
-import { workExperienceSchema, WorkExperienceValues } from "@/lib/validation"
+import { educationSchema, EducationValues } from "@/lib/validation"
 import { Button } from "@/components/ui/button"
 import {
   Form,
@@ -22,14 +22,11 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { DatePicker } from "@/components/date-picker"
 
-export function WorkExperienceForm({
-  resumeData,
-  setResumeData,
-}: BuilderFormProps) {
-  const form = useForm<WorkExperienceValues>({
-    resolver: zodResolver(workExperienceSchema),
+export function EducationForm({ resumeData, setResumeData }: BuilderFormProps) {
+  const form = useForm<EducationValues>({
+    resolver: zodResolver(educationSchema),
     defaultValues: {
-      workExperiences: resumeData.workExperiences ?? [],
+      educations: resumeData.educations ?? [],
     },
   })
 
@@ -40,8 +37,7 @@ export function WorkExperienceForm({
 
       setResumeData({
         ...resumeData,
-        workExperiences:
-          values.workExperiences?.filter((exp) => exp !== undefined) ?? [],
+        educations: values.educations?.filter((ed) => ed !== undefined) ?? [],
       })
     })
 
@@ -50,19 +46,19 @@ export function WorkExperienceForm({
 
   const { fields, append, remove } = useFieldArray({
     control: form.control,
-    name: "workExperiences",
+    name: "educations",
   })
 
   return (
     <div className="max-w-xl mx-auto space-y-6">
       <div className="space-y-1.5 text-center">
-        <h2 className="text-2xl font-semibold">Work experience</h2>
-        <p className="text-sm text-muted-foreground">Where did you work?</p>
+        <h2 className="text-2xl font-semibold">Education</h2>
+        <p className="text-sm text-muted-foreground">Where did you study?</p>
       </div>
       <Form {...form}>
         <form className="space-y-3">
           {fields.map((field, index) => (
-            <WorkExperienceItem
+            <EducationItem
               key={field.id}
               form={form}
               index={index}
@@ -75,14 +71,12 @@ export function WorkExperienceForm({
               type="button"
               onClick={() =>
                 append({
-                  position: "",
-                  company: "",
                   description: "",
                 })
               }
             >
               <PlusIcon className="size-4" />
-              Add Work Experience
+              Add Education
             </Button>
           </div>
         </form>
@@ -91,47 +85,41 @@ export function WorkExperienceForm({
   )
 }
 
-interface WorkExperienceItemProps {
-  form: UseFormReturn<WorkExperienceValues>
+interface EducationItemProps {
+  form: UseFormReturn<EducationValues>
   index: number
   onRemove: (index: number) => void
 }
 
-function WorkExperienceItem({
-  form,
-  index,
-  onRemove,
-}: WorkExperienceItemProps) {
+function EducationItem({ form, index, onRemove }: EducationItemProps) {
   return (
     <div className="space-y-3 border rounded-md bg-background p-3">
       <div className="flex justify-between items-center gap-2">
-        <span className="font-semibold">Work experience {index + 1}</span>
+        <span className="font-semibold">Education {index + 1}</span>
         <GripHorizontalIcon className="size-4 cursor-grab text-muted-foreground" />
       </div>
       <FormField
         control={form.control}
-        name={`workExperiences.${index}.position`}
+        name={`educations.${index}.degree`}
         render={({ field }) => (
           <FormItem>
-            <FormLabel>Position</FormLabel>
+            <FormLabel>Degree</FormLabel>
             <FormControl>
-              <Input {...field} placeholder="Special Agent" />
+              <Input {...field} placeholder="Bachelor of Arts in Psychology" />
             </FormControl>
             <FormMessage />
-            <FormDescription>
-              The title of the position you occupied.
-            </FormDescription>
+            <FormDescription>The degree you were studying for.</FormDescription>
           </FormItem>
         )}
       />
       <FormField
         control={form.control}
-        name={`workExperiences.${index}.company`}
+        name={`educations.${index}.school`}
         render={({ field }) => (
           <FormItem>
-            <FormLabel>Company</FormLabel>
+            <FormLabel>School</FormLabel>
             <FormControl>
-              <Input {...field} placeholder="FBI X-Files Division" />
+              <Input {...field} placeholder="Oxford University" />
             </FormControl>
             <FormMessage />
           </FormItem>
@@ -140,7 +128,7 @@ function WorkExperienceItem({
       <div className="grid grid-cols-2 gap-3">
         <FormField
           control={form.control}
-          name={`workExperiences.${index}.startDate`}
+          name={`educations.${index}.startDate`}
           render={({ field }) => (
             <FormItem>
               <FormLabel>Start Date</FormLabel>
@@ -153,7 +141,7 @@ function WorkExperienceItem({
         />
         <FormField
           control={form.control}
-          name={`workExperiences.${index}.endDate`}
+          name={`educations.${index}.endDate`}
           render={({ field }) => (
             <FormItem>
               <FormLabel>End Date</FormLabel>
@@ -166,19 +154,19 @@ function WorkExperienceItem({
         />
       </div>
       <FormDescription>
-        Leave <span className="font-semibold">end date</span> empty if this is
-        your current job.
+        Leave <span className="font-semibold">end date</span> empty if you are
+        currently studying.
       </FormDescription>
       <FormField
         control={form.control}
-        name={`workExperiences.${index}.description`}
+        name={`educations.${index}.description`}
         render={({ field }) => (
           <FormItem>
             <FormLabel>Description</FormLabel>
             <FormControl>
               <Textarea
                 {...field}
-                placeholder="Exposed government cover-ups and conspiracies while pursuing evidence of alien life"
+                placeholder={`Graduated summa cum laude, 1982Thesis: "The Psychological Effects of Belief in the Paranormal."`}
                 rows={3}
               />
             </FormControl>
