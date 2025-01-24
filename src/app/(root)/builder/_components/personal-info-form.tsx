@@ -1,12 +1,14 @@
 "use client"
 
-import { useEffect } from "react"
+import { useEffect, useRef } from "react"
 
 import { useResumeBuilderStore } from "@/store/use-resume-builder-store"
 import { zodResolver } from "@hookform/resolvers/zod"
+import { Trash2Icon } from "lucide-react"
 import { useForm } from "react-hook-form"
 
 import { personalInfoSchema, PersonalInfoValues } from "@/lib/validation"
+import { Button } from "@/components/ui/button"
 import {
   Form,
   FormControl,
@@ -46,6 +48,8 @@ export function PersonalInfoForm() {
 
     return unsubscribe
   }, [form, resumeData, setResumeData])
+
+  const photoInputRef = useRef<HTMLInputElement>(null)
 
   return (
     <div className="max-w-xl mx-auto space-y-6">
@@ -160,17 +164,34 @@ export function PersonalInfoForm() {
             render={({ field: { value, onChange, ...fieldValues } }) => (
               <FormItem>
                 <FormLabel>Photo</FormLabel>
-                <FormControl>
-                  <Input
-                    type="file"
-                    // accept="image/*"
-                    onChange={(e) => {
-                      const file = e.target.files?.[0]
-                      onChange(file)
+                <div className="flex items-center gap-2">
+                  <FormControl>
+                    <Input
+                      {...fieldValues}
+                      type="file"
+                      // accept="image/*"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0]
+                        onChange(file)
+                      }}
+                      ref={photoInputRef}
+                    />
+                  </FormControl>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon"
+                    title="Remove photo"
+                    onClick={() => {
+                      onChange(null)
+                      if (photoInputRef.current) {
+                        photoInputRef.current.value = ""
+                      }
                     }}
-                    {...fieldValues}
-                  />
-                </FormControl>
+                  >
+                    <Trash2Icon className="size-4" />
+                  </Button>
+                </div>
                 <FormDescription>
                   Allowed file types: .jpg, .png
                 </FormDescription>
