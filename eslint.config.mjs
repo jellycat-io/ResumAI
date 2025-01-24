@@ -18,7 +18,7 @@ const eslintConfig = [
     plugins: ["prettier", "jsx-a11y"],
     rules: {
       "@typescript-eslint/no-unused-vars": [
-        "error",
+        "warn",
         {
           argsIgnorePattern: "^_",
           ignoreRestSiblings: true,

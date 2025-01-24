@@ -2,10 +2,10 @@
 
 import { useEffect } from "react"
 
+import { useResumeBuilderStore } from "@/store/use-resume-builder-store"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 
-import { BuilderFormProps } from "@/lib/types"
 import { generalInfoSchema, GeneralInfoValues } from "@/lib/validation"
 import {
   Form,
@@ -19,10 +19,9 @@ import {
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 
-export function GeneralInfoForm({
-  resumeData,
-  setResumeData,
-}: BuilderFormProps) {
+export function GeneralInfoForm() {
+  const { resumeData, setResumeData } = useResumeBuilderStore()
+
   const form = useForm<GeneralInfoValues>({
     resolver: zodResolver(generalInfoSchema),
     defaultValues: {

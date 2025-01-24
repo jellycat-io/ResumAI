@@ -2,10 +2,10 @@
 
 import { useEffect } from "react"
 
+import { useResumeBuilderStore } from "@/store/use-resume-builder-store"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 
-import { BuilderFormProps } from "@/lib/types"
 import { personalInfoSchema, PersonalInfoValues } from "@/lib/validation"
 import {
   Form,
@@ -18,10 +18,8 @@ import {
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 
-export function PersonalInfoForm({
-  resumeData,
-  setResumeData,
-}: BuilderFormProps) {
+export function PersonalInfoForm() {
+  const { resumeData, setResumeData } = useResumeBuilderStore()
   const form = useForm<PersonalInfoValues>({
     resolver: zodResolver(personalInfoSchema),
     defaultValues: {
