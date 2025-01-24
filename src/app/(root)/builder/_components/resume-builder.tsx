@@ -48,7 +48,7 @@ export function ResumeBuilder() {
         <div className="absolute inset-0 flex w-full">
           <section
             className={cn(
-              "w-full md:w-1/2 md:flex p-6 overflow-y-auto space-y-6",
+              "w-full md:w-1/2 md:flex md:flex-col p-6 overflow-y-auto space-y-6",
               showSmResumePreview && "hidden",
             )}
           >
