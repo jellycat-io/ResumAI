@@ -45,7 +45,7 @@ export function GeneralInfoForm() {
   }, [form, resumeData, setResumeData])
 
   return (
-    <div className="max-w-xl mx-auto space-y-6">
+    <div className="mx-auto space-y-6">
       <div className="space-y-1.5 text-center">
         <h2 className="text-2xl font-semibold">General info</h2>
         <p className="text-sm text-muted-foreground">

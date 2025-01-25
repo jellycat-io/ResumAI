@@ -16,6 +16,8 @@ datasource db {
 model Resume {
   id          String   @id @default(cuid())
   userId      String
+  title       String?
+  description String?
   photoUrl    String?
   colorHex    String   @default("#000000")
   borderStyle String   @default("squircle")

@@ -5,6 +5,7 @@ import "./globals.css"
 
 import { ClerkProvider } from "@clerk/nextjs"
 
+import { Toaster } from "@/components/ui/toaster"
 import { ThemeProvider } from "@/components/theme-provider"
 
 const geistSans = Geist({
@@ -44,6 +45,7 @@ export default function RootLayout({
             disableTransitionOnChange
           >
             {children}
+            <Toaster />
           </ThemeProvider>
         </body>
       </html>
