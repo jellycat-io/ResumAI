@@ -2,8 +2,9 @@
 
 import { CircleIcon, SquareIcon, SquircleIcon } from "lucide-react"
 
-import { ResumeValues } from "@/lib/validation"
 import { Button } from "@/components/ui/button"
+
+import { useResumeData } from "../_context/_resume-data-context"
 
 export const BORDER_STYLES = {
   SQUARE: "square",
@@ -13,12 +14,8 @@ export const BORDER_STYLES = {
 
 const borderStyles = Object.values(BORDER_STYLES)
 
-interface BorderPickerProps {
-  resumeData: ResumeValues
-  setResumeData: (data: ResumeValues) => void
-}
-
-export function BorderPicker({ resumeData, setResumeData }: BorderPickerProps) {
+export function BorderPicker() {
+  const { resumeData, setResumeData } = useResumeData()
   const { borderStyle } = resumeData
 
   function handleClick() {

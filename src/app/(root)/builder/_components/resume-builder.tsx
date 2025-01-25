@@ -3,12 +3,15 @@
 import { useState } from "react"
 import { useSearchParams } from "next/navigation"
 
-import { toResumeValues } from "@/lib/mappings"
 import { ResumeServerData } from "@/lib/types"
 import { cn } from "@/lib/utils"
 import { useUnloadWarning } from "@/hooks/use-unload-warning"
 import { Separator } from "@/components/ui/separator"
 
+import {
+  ResumeDataProvider,
+  useResumeData,
+} from "../_context/_resume-data-context"
 import { useAutoSaveResume } from "../_hooks/use-autosave-resume"
 import { BUILDER_STEPS } from "../steps"
 import { Breadcrumbs } from "./breadcrumbs"
@@ -20,10 +23,16 @@ interface ResumeBuilderProps {
 }
 
 export function ResumeBuilder({ resume }: ResumeBuilderProps) {
-  const [showSmResumePreview, setShowSmResumePreview] = useState(false)
-  const [resumeData, setResumeData] = useState(
-    resume ? toResumeValues(resume) : {},
+  return (
+    <ResumeDataProvider initialResume={resume}>
+      <ResumeBuilderContent />
+    </ResumeDataProvider>
   )
+}
+
+function ResumeBuilderContent() {
+  const [showSmResumePreview, setShowSmResumePreview] = useState(false)
+  const { resumeData } = useResumeData()
   const searchParams = useSearchParams()
 
   const { isSaving, hasUnsavedChanges } = useAutoSaveResume(resumeData)
@@ -60,18 +69,11 @@ export function ResumeBuilder({ resume }: ResumeBuilderProps) {
             )}
           >
             <Breadcrumbs currentStep={currentStep} setCurrentStep={setStep} />
-            {FormComponent && (
-              <FormComponent
-                resumeData={resumeData}
-                setResumeData={setResumeData}
-              />
-            )}
+            {FormComponent && <FormComponent />}
           </section>
           <Separator orientation="vertical" className="grow" />
           <RenderPreview
             className={cn(showSmResumePreview && "flex")}
-            resumeData={resumeData}
-            setResumeData={setResumeData}
             showDebug
           />
         </div>

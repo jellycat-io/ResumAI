@@ -3,13 +3,14 @@
 import { PaintbrushIcon } from "lucide-react"
 
 import { cn } from "@/lib/utils"
-import { ResumeValues } from "@/lib/validation"
 import { Button } from "@/components/ui/button"
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover"
+
+import { useResumeData } from "../_context/_resume-data-context"
 
 const COLORS = {
   black: "#000000",
@@ -30,12 +31,8 @@ const COLORS = {
   lavender: "#babbf1",
 }
 
-interface ColorPickerProps {
-  resumeData: ResumeValues
-  setResumeData: (data: ResumeValues) => void
-}
-
-export function ColorPicker({ resumeData, setResumeData }: ColorPickerProps) {
+export function ColorPicker() {
+  const { resumeData, setResumeData } = useResumeData()
   return (
     <Popover>
       <PopoverTrigger asChild>

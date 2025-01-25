@@ -3,24 +3,20 @@ import Image from "next/image"
 
 import { formatDate } from "date-fns"
 
-import { RenderSectionProps } from "@/lib/types"
 import { cn } from "@/lib/utils"
 import { ResumeValues } from "@/lib/validation"
 import { useDimensions } from "@/hooks/use-dimensions"
 import { Badge } from "@/components/ui/badge"
 
+import { useResumeData } from "../_context/_resume-data-context"
 import { BORDER_STYLES } from "./border-picker"
 
 interface RenderPreviewContentProps {
   className?: string
-  resumeData: ResumeValues
-  setResumeData: (data: ResumeValues) => void
 }
 
-export function RenderPreviewContent({
-  className,
-  resumeData,
-}: RenderPreviewContentProps) {
+export function RenderPreviewContent({ className }: RenderPreviewContentProps) {
+  const { resumeData } = useResumeData()
   const containerRef = useRef<HTMLDivElement>(null)
   const { width } = useDimensions(containerRef)
 
@@ -46,6 +42,10 @@ export function RenderPreviewContent({
       </div>
     </div>
   )
+}
+
+interface RenderSectionProps {
+  resumeData: ResumeValues
 }
 
 function PersonalInfoHeader({ resumeData }: RenderSectionProps) {
@@ -93,7 +93,7 @@ function PersonalInfoHeader({ resumeData }: RenderSectionProps) {
       )}
       <div className="space-y-3">
         <div style={{ color: colorHex }}>
-          <p className="text-2xl font-bold">{`${firstName} ${lastName}`}</p>
+          <p className="text-2xl font-bold">{`${firstName ?? ""} ${lastName ?? ""}`}</p>
           <p className="font-medium">{jobTitle}</p>
         </div>
         <p className="text-xs text-gray-500">
@@ -115,7 +115,7 @@ function SummarySection({ resumeData }: RenderSectionProps) {
 
   return (
     <section>
-      <SectionSeparator />
+      <SectionSeparator colorHex={resumeData.colorHex} />
       <div className="space-y-3 break-inside-avoid">
         <div className="whitespace-pre-line text-sm">{summary}</div>
       </div>
@@ -132,9 +132,9 @@ function WorkExperienceSection({ resumeData }: RenderSectionProps) {
 
   return (
     <section>
-      <SectionSeparator />
+      <SectionSeparator colorHex={colorHex} />
       <div className="space-y-3">
-        <SectionTitle>Work Experience</SectionTitle>
+        <SectionTitle colorHex={colorHex}>Work Experience</SectionTitle>
         {filledWorkExperiences.map((exp, index) => (
           <div
             key={`work-exp-${index}`}

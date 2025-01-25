@@ -5,7 +5,6 @@ import { useEffect } from "react"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 
-import { BuilderFormProps } from "@/lib/types"
 import { generalInfoSchema, GeneralInfoValues } from "@/lib/validation"
 import {
   Form,
@@ -19,10 +18,10 @@ import {
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 
-export function GeneralInfoForm({
-  resumeData,
-  setResumeData,
-}: BuilderFormProps) {
+import { useResumeData } from "../_context/_resume-data-context"
+
+export function GeneralInfoForm() {
+  const { resumeData, setResumeData } = useResumeData()
   const form = useForm<GeneralInfoValues>({
     resolver: zodResolver(generalInfoSchema),
     defaultValues: {

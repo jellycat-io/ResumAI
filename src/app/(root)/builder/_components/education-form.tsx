@@ -24,7 +24,6 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { GripHorizontalIcon, PlusIcon, Trash2Icon } from "lucide-react"
 import { useFieldArray, useForm, UseFormReturn } from "react-hook-form"
 
-import { BuilderFormProps } from "@/lib/types"
 import { cn } from "@/lib/utils"
 import { educationSchema, EducationValues } from "@/lib/validation"
 import { Button } from "@/components/ui/button"
@@ -41,7 +40,10 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { DatePicker } from "@/components/date-picker"
 
-export function EducationForm({ resumeData, setResumeData }: BuilderFormProps) {
+import { useResumeData } from "../_context/_resume-data-context"
+
+export function EducationForm() {
+  const { resumeData, setResumeData } = useResumeData()
   const form = useForm<EducationValues>({
     resolver: zodResolver(educationSchema),
     defaultValues: {

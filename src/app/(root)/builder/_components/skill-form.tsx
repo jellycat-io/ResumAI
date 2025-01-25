@@ -5,7 +5,6 @@ import { useEffect } from "react"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 
-import { BuilderFormProps } from "@/lib/types"
 import { skillSchema, SkillValues } from "@/lib/validation"
 import {
   Form,
@@ -18,7 +17,10 @@ import {
 } from "@/components/ui/form"
 import { Textarea } from "@/components/ui/textarea"
 
-export function SkillForm({ resumeData, setResumeData }: BuilderFormProps) {
+import { useResumeData } from "../_context/_resume-data-context"
+
+export function SkillForm() {
+  const { resumeData, setResumeData } = useResumeData()
   const form = useForm<SkillValues>({
     resolver: zodResolver(skillSchema),
     defaultValues: {
