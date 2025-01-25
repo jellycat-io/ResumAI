@@ -10,14 +10,17 @@ import { Button } from "@/components/ui/button"
 import { saveResume } from "../actions"
 
 export function useAutoSaveResume(resumeData: ResumeValues) {
-  const [lastSavedData, setLastSavedData] = useState(
-    structuredClone(resumeData),
-  )
-  const debouncedResumeData = useDebounce<ResumeValues>(resumeData, 1500)
   const searchParams = useSearchParams()
   const { toast } = useToast()
 
   const [resumeId, setResumeId] = useState(resumeData.id)
+
+  const debouncedResumeData = useDebounce<ResumeValues>(resumeData, 1500)
+
+  const [lastSavedData, setLastSavedData] = useState(
+    structuredClone(resumeData),
+  )
+
   const [isSaving, setIsSaving] = useState(false)
   const [isError, setIsError] = useState(false)
 
@@ -45,7 +48,7 @@ export function useAutoSaveResume(resumeData: ResumeValues) {
         setResumeId(updatedResume.id)
         setLastSavedData(newData)
 
-        if (searchParams.get("resumeId") !== resumeId) {
+        if (searchParams.get("resumeId") !== updatedResume.id) {
           const newSearchParams = new URLSearchParams(searchParams)
           newSearchParams.set("resumeId", updatedResume.id)
           window.history.replaceState(
@@ -99,6 +102,7 @@ export function useAutoSaveResume(resumeData: ResumeValues) {
   return {
     isSaving,
     hasUnsavedChanges:
-      JSON.stringify(resumeData) !== JSON.stringify(lastSavedData),
+      JSON.stringify(resumeData, fileReplacer) !==
+      JSON.stringify(lastSavedData, fileReplacer),
   }
 }

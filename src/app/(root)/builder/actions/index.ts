@@ -6,7 +6,22 @@ import { db } from "@/server/db"
 import { auth } from "@clerk/nextjs/server"
 import { del, put } from "@vercel/blob"
 
+import { resumeDataInclude } from "@/lib/types"
 import { resumeSchema, ResumeValues } from "@/lib/validation"
+
+export async function getResume(resumeId?: string) {
+  const { userId } = await auth()
+  if (!userId) throw new Error("Unauthorized")
+
+  const existingResume = resumeId
+    ? await db.resume.findUnique({
+        where: { id: resumeId, userId },
+        include: resumeDataInclude,
+      })
+    : null
+
+  return existingResume
+}
 
 export async function saveResume(values: ResumeValues) {
   const { userId } = await auth()
@@ -44,6 +59,8 @@ export async function saveResume(values: ResumeValues) {
 
     newPhotoUrl = null
   }
+
+  console.log("ID:", id)
 
   if (id) {
     return db.resume.update({

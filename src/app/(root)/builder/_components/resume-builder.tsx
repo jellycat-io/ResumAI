@@ -3,8 +3,8 @@
 import { useState } from "react"
 import { useSearchParams } from "next/navigation"
 
-import { useResumeBuilderStore } from "@/store/use-resume-builder-store"
-
+import { toResumeValues } from "@/lib/mappings"
+import { ResumeServerData } from "@/lib/types"
 import { cn } from "@/lib/utils"
 import { useUnloadWarning } from "@/hooks/use-unload-warning"
 import { Separator } from "@/components/ui/separator"
@@ -15,29 +15,31 @@ import { Breadcrumbs } from "./breadcrumbs"
 import { Footer } from "./footer"
 import { RenderPreview } from "./render-preview"
 
-export function ResumeBuilder() {
+interface ResumeBuilderProps {
+  resume: ResumeServerData | null
+}
+
+export function ResumeBuilder({ resume }: ResumeBuilderProps) {
   const [showSmResumePreview, setShowSmResumePreview] = useState(false)
-  const { resumeData, currentStep, setCurrentStep } = useResumeBuilderStore()
+  const [resumeData, setResumeData] = useState(
+    resume ? toResumeValues(resume) : {},
+  )
   const searchParams = useSearchParams()
+
   const { isSaving, hasUnsavedChanges } = useAutoSaveResume(resumeData)
 
   useUnloadWarning(hasUnsavedChanges)
 
-  const urlStep = searchParams.get("step") || BUILDER_STEPS[0].key
-
-  if (currentStep !== urlStep) {
-    setCurrentStep(urlStep)
-  }
+  const currentStep = searchParams.get("step") || BUILDER_STEPS[0].key
 
   function setStep(key: string) {
     const newSearchParams = new URLSearchParams(searchParams)
     newSearchParams.set("step", key)
     window.history.pushState(null, "", `?${newSearchParams.toString()}`)
-    setCurrentStep(key)
   }
 
   const FormComponent = BUILDER_STEPS.find(
-    (step) => step.key === urlStep,
+    (step) => step.key === currentStep,
   )?.component
 
   return (
@@ -57,16 +59,26 @@ export function ResumeBuilder() {
               showSmResumePreview && "hidden",
             )}
           >
-            <Breadcrumbs currentStep={urlStep} setCurrentStep={setStep} />
-            {FormComponent && <FormComponent />}
+            <Breadcrumbs currentStep={currentStep} setCurrentStep={setStep} />
+            {FormComponent && (
+              <FormComponent
+                resumeData={resumeData}
+                setResumeData={setResumeData}
+              />
+            )}
           </section>
           <Separator orientation="vertical" className="grow" />
-          <RenderPreview className={cn(showSmResumePreview && "flex")} />
+          <RenderPreview
+            className={cn(showSmResumePreview && "flex")}
+            resumeData={resumeData}
+            setResumeData={setResumeData}
+            showDebug
+          />
         </div>
       </main>
       <Footer
         isSaving={isSaving}
-        currentStep={urlStep}
+        currentStep={currentStep}
         setCurrentStep={setStep}
         showSmResumePreview={showSmResumePreview}
         setShowSmResumePreview={setShowSmResumePreview}

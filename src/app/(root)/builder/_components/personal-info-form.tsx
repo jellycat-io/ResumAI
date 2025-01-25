@@ -2,11 +2,11 @@
 
 import { useEffect, useRef } from "react"
 
-import { useResumeBuilderStore } from "@/store/use-resume-builder-store"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Trash2Icon } from "lucide-react"
 import { useForm } from "react-hook-form"
 
+import { BuilderFormProps } from "@/lib/types"
 import { personalInfoSchema, PersonalInfoValues } from "@/lib/validation"
 import { Button } from "@/components/ui/button"
 import {
@@ -20,8 +20,10 @@ import {
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 
-export function PersonalInfoForm() {
-  const { resumeData, setResumeData } = useResumeBuilderStore()
+export function PersonalInfoForm({
+  resumeData,
+  setResumeData,
+}: BuilderFormProps) {
   const form = useForm<PersonalInfoValues>({
     resolver: zodResolver(personalInfoSchema),
     defaultValues: {

@@ -1,10 +1,11 @@
 import { useEffect, useRef, useState } from "react"
 import Image from "next/image"
 
-import { useResumeBuilderStore } from "@/store/use-resume-builder-store"
 import { formatDate } from "date-fns"
 
+import { RenderSectionProps } from "@/lib/types"
 import { cn } from "@/lib/utils"
+import { ResumeValues } from "@/lib/validation"
 import { useDimensions } from "@/hooks/use-dimensions"
 import { Badge } from "@/components/ui/badge"
 
@@ -12,9 +13,14 @@ import { BORDER_STYLES } from "./border-picker"
 
 interface RenderPreviewContentProps {
   className?: string
+  resumeData: ResumeValues
+  setResumeData: (data: ResumeValues) => void
 }
 
-export function RenderPreviewContent({ className }: RenderPreviewContentProps) {
+export function RenderPreviewContent({
+  className,
+  resumeData,
+}: RenderPreviewContentProps) {
   const containerRef = useRef<HTMLDivElement>(null)
   const { width } = useDimensions(containerRef)
 
@@ -32,18 +38,17 @@ export function RenderPreviewContent({ className }: RenderPreviewContentProps) {
           zoom: (1 / 794) * width,
         }}
       >
-        <PersonalInfoHeader />
-        <SummarySection />
-        <WorkExperienceSection />
-        <EducationSection />
-        <SkillsSection />
+        <PersonalInfoHeader resumeData={resumeData} />
+        <SummarySection resumeData={resumeData} />
+        <WorkExperienceSection resumeData={resumeData} />
+        <EducationSection resumeData={resumeData} />
+        <SkillsSection resumeData={resumeData} />
       </div>
     </div>
   )
 }
 
-function PersonalInfoHeader() {
-  const { resumeData } = useResumeBuilderStore()
+function PersonalInfoHeader({ resumeData }: RenderSectionProps) {
   const {
     photo,
     firstName,
@@ -103,8 +108,7 @@ function PersonalInfoHeader() {
   )
 }
 
-function SummarySection() {
-  const { resumeData } = useResumeBuilderStore()
+function SummarySection({ resumeData }: RenderSectionProps) {
   const { summary } = resumeData
 
   if (!summary) return null
@@ -119,8 +123,7 @@ function SummarySection() {
   )
 }
 
-function WorkExperienceSection() {
-  const { resumeData } = useResumeBuilderStore()
+function WorkExperienceSection({ resumeData }: RenderSectionProps) {
   const { workExperiences, colorHex } = resumeData
 
   const filledWorkExperiences = getFilledArray(workExperiences)
@@ -159,8 +162,7 @@ function WorkExperienceSection() {
   )
 }
 
-function EducationSection() {
-  const { resumeData } = useResumeBuilderStore()
+function EducationSection({ resumeData }: RenderSectionProps) {
   const { educations, colorHex } = resumeData
 
   const filledEducations = getFilledArray(educations)
@@ -169,9 +171,9 @@ function EducationSection() {
 
   return (
     <section>
-      <SectionSeparator />
+      <SectionSeparator colorHex={colorHex} />
       <div className="space-y-3">
-        <SectionTitle>Education</SectionTitle>
+        <SectionTitle colorHex={colorHex}>Education</SectionTitle>
         {filledEducations.map((edu, index) => (
           <div
             key={`work-exp-${index}`}
@@ -200,17 +202,16 @@ function EducationSection() {
   )
 }
 
-function SkillsSection() {
-  const { resumeData } = useResumeBuilderStore()
+function SkillsSection({ resumeData }: RenderSectionProps) {
   const { skills, colorHex, borderStyle } = resumeData
 
   if (!skills?.length) return
 
   return (
     <section>
-      <SectionSeparator />
+      <SectionSeparator colorHex={colorHex} />
       <div className="space-y-3">
-        <SectionTitle>Skills</SectionTitle>
+        <SectionTitle colorHex={colorHex}>Skills</SectionTitle>
         <div className="flex flex-wrap items-center break-inside-avoid gap-2">
           {skills.map((skill, index) => (
             <Badge
@@ -235,18 +236,17 @@ function SkillsSection() {
   )
 }
 
-function SectionSeparator() {
-  const {
-    resumeData: { colorHex },
-  } = useResumeBuilderStore()
-
+function SectionSeparator({ colorHex }: { colorHex?: string }) {
   return <hr className="border-b-2 mb-3" style={{ borderColor: colorHex }} />
 }
 
-function SectionTitle({ children }: { children: React.ReactNode }) {
-  const {
-    resumeData: { colorHex },
-  } = useResumeBuilderStore()
+function SectionTitle({
+  children,
+  colorHex,
+}: {
+  children: React.ReactNode
+  colorHex?: string
+}) {
   return (
     <p className="text-lg font-semibold" style={{ color: colorHex }}>
       {children}

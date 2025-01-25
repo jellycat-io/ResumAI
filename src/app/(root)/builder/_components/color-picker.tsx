@@ -1,9 +1,9 @@
 "use client"
 
-import { useResumeBuilderStore } from "@/store/use-resume-builder-store"
 import { PaintbrushIcon } from "lucide-react"
 
 import { cn } from "@/lib/utils"
+import { ResumeValues } from "@/lib/validation"
 import { Button } from "@/components/ui/button"
 import {
   Popover,
@@ -30,9 +30,12 @@ const COLORS = {
   lavender: "#babbf1",
 }
 
-export function ColorPicker() {
-  const { resumeData, setResumeData } = useResumeBuilderStore()
+interface ColorPickerProps {
+  resumeData: ResumeValues
+  setResumeData: (data: ResumeValues) => void
+}
 
+export function ColorPicker({ resumeData, setResumeData }: ColorPickerProps) {
   return (
     <Popover>
       <PopoverTrigger asChild>

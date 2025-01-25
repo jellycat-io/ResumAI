@@ -2,7 +2,6 @@
 
 import { useEffect } from "react"
 
-import { useResumeBuilderStore } from "@/store/use-resume-builder-store"
 import {
   closestCenter,
   DndContext,
@@ -25,6 +24,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { GripHorizontalIcon, PlusIcon, Trash2Icon } from "lucide-react"
 import { useFieldArray, useForm, UseFormReturn } from "react-hook-form"
 
+import { BuilderFormProps } from "@/lib/types"
 import { cn } from "@/lib/utils"
 import { workExperienceSchema, WorkExperienceValues } from "@/lib/validation"
 import { Button } from "@/components/ui/button"
@@ -41,8 +41,10 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { DatePicker } from "@/components/date-picker"
 
-export function WorkExperienceForm() {
-  const { resumeData, setResumeData } = useResumeBuilderStore()
+export function WorkExperienceForm({
+  resumeData,
+  setResumeData,
+}: BuilderFormProps) {
   const form = useForm<WorkExperienceValues>({
     resolver: zodResolver(workExperienceSchema),
     defaultValues: {

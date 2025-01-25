@@ -1,8 +1,8 @@
 "use client"
 
-import { useResumeBuilderStore } from "@/store/use-resume-builder-store"
 import { CircleIcon, SquareIcon, SquircleIcon } from "lucide-react"
 
+import { ResumeValues } from "@/lib/validation"
 import { Button } from "@/components/ui/button"
 
 export const BORDER_STYLES = {
@@ -13,8 +13,12 @@ export const BORDER_STYLES = {
 
 const borderStyles = Object.values(BORDER_STYLES)
 
-export function BorderPicker() {
-  const { resumeData, setResumeData } = useResumeBuilderStore()
+interface BorderPickerProps {
+  resumeData: ResumeValues
+  setResumeData: (data: ResumeValues) => void
+}
+
+export function BorderPicker({ resumeData, setResumeData }: BorderPickerProps) {
   const { borderStyle } = resumeData
 
   function handleClick() {
