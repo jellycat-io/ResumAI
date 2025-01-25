@@ -6,8 +6,10 @@ import { useSearchParams } from "next/navigation"
 import { useResumeBuilderStore } from "@/store/use-resume-builder-store"
 
 import { cn } from "@/lib/utils"
+import { useUnloadWarning } from "@/hooks/use-unload-warning"
 import { Separator } from "@/components/ui/separator"
 
+import { useAutoSaveResume } from "../_hooks/use-autosave-resume"
 import { BUILDER_STEPS } from "../steps"
 import { Breadcrumbs } from "./breadcrumbs"
 import { Footer } from "./footer"
@@ -15,8 +17,11 @@ import { RenderPreview } from "./render-preview"
 
 export function ResumeBuilder() {
   const [showSmResumePreview, setShowSmResumePreview] = useState(false)
-  const { currentStep, setCurrentStep } = useResumeBuilderStore()
+  const { resumeData, currentStep, setCurrentStep } = useResumeBuilderStore()
   const searchParams = useSearchParams()
+  const { isSaving, hasUnsavedChanges } = useAutoSaveResume(resumeData)
+
+  useUnloadWarning(hasUnsavedChanges)
 
   const urlStep = searchParams.get("step") || BUILDER_STEPS[0].key
 
@@ -60,6 +65,7 @@ export function ResumeBuilder() {
         </div>
       </main>
       <Footer
+        isSaving={isSaving}
         currentStep={urlStep}
         setCurrentStep={setStep}
         showSmResumePreview={showSmResumePreview}

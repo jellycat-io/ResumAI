@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button"
 import { BUILDER_STEPS } from "../steps"
 
 interface FooterProps {
+  isSaving: boolean
   currentStep: string
   setCurrentStep: (step: string) => void
   showSmResumePreview: boolean
@@ -14,6 +15,7 @@ interface FooterProps {
 }
 
 export function Footer({
+  isSaving,
   currentStep,
   setCurrentStep,
   showSmResumePreview,
@@ -62,13 +64,15 @@ export function Footer({
           )}
         </Button>
         <div className="flex items-center justify-end gap-3">
+          {isSaving && (
+            <div className="flex items-center gap-2 text-muted-foreground">
+              <Loader2Icon className="size-4 animate-spin" />
+              <p className="text-sm">Saving...</p>
+            </div>
+          )}
           <Button variant="outline" asChild>
             <Link href="/resumes">Close</Link>
           </Button>
-          <div className="flex items-center gap-2 opacity-0">
-            <Loader2Icon className="size-4 animate-spin" />
-            <p className="text-muted-foreground text-sm">Saving...</p>
-          </div>
         </div>
       </div>
     </footer>

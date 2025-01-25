@@ -46,7 +46,7 @@ export function EducationForm() {
   const form = useForm<EducationValues>({
     resolver: zodResolver(educationSchema),
     defaultValues: {
-      educations: resumeData.educations ?? [],
+      educations: resumeData.educations,
     },
   })
 
@@ -122,6 +122,8 @@ export function EducationForm() {
               type="button"
               onClick={() =>
                 append({
+                  degree: "",
+                  school: "",
                   description: "",
                 })
               }
