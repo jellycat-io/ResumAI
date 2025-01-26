@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 
 import {
   closestCenter,
@@ -21,12 +21,33 @@ import {
 } from "@dnd-kit/sortable"
 import { CSS } from "@dnd-kit/utilities"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { GripHorizontalIcon, PlusIcon, Trash2Icon } from "lucide-react"
+import {
+  GripHorizontalIcon,
+  PlusIcon,
+  Trash2Icon,
+  WandSparklesIcon,
+} from "lucide-react"
 import { useFieldArray, useForm, UseFormReturn } from "react-hook-form"
 
 import { cn } from "@/lib/utils"
-import { workExperienceSchema, WorkExperienceValues } from "@/lib/validation"
+import {
+  GenerateWorkExperienceInput,
+  generateWorkExperienceSchema,
+  WorkExperience,
+  workExperienceSchema,
+  WorkExperienceValues,
+} from "@/lib/validation"
+import { toast } from "@/hooks/use-toast"
 import { Button } from "@/components/ui/button"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
 import {
   Form,
   FormControl,
@@ -39,8 +60,10 @@ import {
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { DatePicker } from "@/components/date-picker"
+import { LoadingButton } from "@/components/loading-button"
 
 import { useResumeData } from "../_context/_resume-data-context"
+import { generateWorkExperience } from "../actions"
 
 export function WorkExperienceForm() {
   const { resumeData, setResumeData } = useResumeData()
@@ -96,7 +119,7 @@ export function WorkExperienceForm() {
         <p className="text-sm text-muted-foreground">Where did you work?</p>
       </div>
       <Form {...form}>
-        <form className="space-y-3">
+        <form className="space-y-6">
           <DndContext
             sensors={sensors}
             collisionDetection={closestCenter}
@@ -118,7 +141,7 @@ export function WorkExperienceForm() {
               ))}
             </SortableContext>
           </DndContext>
-          <div className="flex justify-center">
+          <div className="flex justify-center gap-2">
             <Button
               variant="outline"
               type="button"
@@ -162,6 +185,18 @@ function WorkExperienceItem({
     isDragging,
   } = useSortable({ id })
 
+  function handleGenerateWorkExperience(workExperience: WorkExperience) {
+    form.setValue(`workExperiences.${index}`, {
+      ...workExperience,
+      startDate: workExperience.startDate
+        ? new Date(workExperience.startDate)
+        : undefined,
+      endDate: workExperience.endDate
+        ? new Date(workExperience.endDate)
+        : undefined,
+    })
+  }
+
   return (
     <div
       className={cn(
@@ -175,13 +210,19 @@ function WorkExperienceItem({
       }}
     >
       <div className="flex justify-between items-center gap-2">
-        <span className="font-semibold">Work experience {index + 1}</span>
+        <div className="flex items-center gap-2">
+          <span className="font-semibold">Work experience {index + 1}</span>
+          <GenerateWorkExperienceButton
+            onWorkExperienceGenerated={handleGenerateWorkExperience}
+          />
+        </div>
         <GripHorizontalIcon
           className="size-4 cursor-grab text-muted-foreground focus:outline-none"
           {...attributes}
           {...listeners}
         />
       </div>
+
       <FormField
         control={form.control}
         name={`workExperiences.${index}.position`}
@@ -269,5 +310,103 @@ function WorkExperienceItem({
         <Trash2Icon className="size-4" />
       </Button>
     </div>
+  )
+}
+
+interface GenerateWorkExperienceButtonProps {
+  onWorkExperienceGenerated: (workExperience: WorkExperience) => void
+}
+
+function GenerateWorkExperienceButton({
+  onWorkExperienceGenerated,
+}: GenerateWorkExperienceButtonProps) {
+  const [showDialog, setShowDialog] = useState(false)
+  const [loading, setLoading] = useState(false)
+
+  const form = useForm<GenerateWorkExperienceInput>({
+    resolver: zodResolver(generateWorkExperienceSchema),
+    defaultValues: {
+      description: "",
+      skills: "",
+    },
+  })
+
+  async function onSubmit(values: GenerateWorkExperienceInput) {
+    try {
+      setLoading(true)
+      const aiResponse = await generateWorkExperience(values)
+      onWorkExperienceGenerated(aiResponse)
+    } catch (e) {
+      console.error(e)
+      toast({
+        variant: "destructive",
+        description: "Something went wrong... Please try again.",
+      })
+    } finally {
+      setLoading(false)
+      setShowDialog(false)
+    }
+  }
+
+  return (
+    <Dialog open={showDialog} onOpenChange={setShowDialog}>
+      <DialogTrigger asChild>
+        <Button
+          type="button"
+          variant="ghost"
+          size="icon"
+          title="Generate with AI"
+        >
+          <WandSparklesIcon className="size-4" />
+        </Button>
+      </DialogTrigger>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Generate work experience</DialogTitle>
+          <DialogDescription>
+            Describe this work experience and the AI will generate an optimized
+            entry for you.
+          </DialogDescription>
+        </DialogHeader>
+        <Form {...form}>
+          <form className="space-y-3" onSubmit={form.handleSubmit(onSubmit)}>
+            <FormField
+              control={form.control}
+              name="description"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Description</FormLabel>
+                  <FormControl>
+                    <Textarea {...field} rows={5} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="skills"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Skills</FormLabel>
+                  <FormControl>
+                    <Input {...field} />
+                  </FormControl>
+                  <FormMessage />
+                  <FormDescription>
+                    Separate each skill with a comma.
+                  </FormDescription>
+                </FormItem>
+              )}
+            />
+            <DialogFooter>
+              <LoadingButton icon={WandSparklesIcon} loading={loading}>
+                {loading ? "Generating..." : "Generate"}
+              </LoadingButton>
+            </DialogFooter>
+          </form>
+        </Form>
+      </DialogContent>
+    </Dialog>
   )
 }

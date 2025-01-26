@@ -12,8 +12,11 @@ import { resumeDataInclude } from "@/lib/types"
 import {
   GenerateSummaryInput,
   generateSummarySchema,
+  GenerateWorkExperienceInput,
+  generateWorkExperienceSchema,
   resumeSchema,
   ResumeValues,
+  WorkExperience,
 } from "@/lib/validation"
 
 export async function getResume(resumeId?: string) {
@@ -35,7 +38,6 @@ export async function saveResume(values: ResumeValues) {
   if (!userId) throw new Error("Unauthorized")
 
   const { id } = values
-  console.log("Received values:", values)
   const { photo, workExperiences, educations, ...resumeValues } =
     resumeSchema.parse(values)
 
@@ -165,4 +167,53 @@ export async function generateSummary(input: GenerateSummaryInput) {
   if (!text) throw new Error("Failed to generate AI response")
 
   return text
+}
+
+export async function generateWorkExperience(
+  input: GenerateWorkExperienceInput,
+) {
+  const { userId } = await auth()
+  if (!userId) throw new Error("Unauthorized")
+
+  // TODO: Check for user's premium status
+
+  const { description, skills } = generateWorkExperienceSchema.parse(input)
+
+  const systemMessage = `
+    You are a job resume generator AI. Your task is to generate a single work experience entry based on the user input.
+    Your response must adhere to the following structure. You can omit fields if they can't be infered from the provided data, but don't add any new ones.
+
+    Job title: <job title>
+    Company: <company name>
+    Start date: <format: YYYY-MM-DD> (only if provided)
+    End date: <format: YYYY-MM-DD> (only if provided)
+    Description: <an optimized description in bullet format, might be infered from the job title and the skills>
+    Skills: <format: skills are separated by commas and must be correctly formatted (i.e. ReactJS, NextJS)>
+  `
+
+  const prompt = `
+    Please provide a work experience entry from this data:
+    START USER DATA
+    Description: ${description}
+    Skills: ${skills}
+    END OF USER DATA
+  `
+
+  const { text } = await generateText({
+    model: openai("gpt-4o-mini"),
+    system: systemMessage,
+    prompt,
+  })
+
+  if (!text) throw new Error("Failed to generate AI response")
+
+  return {
+    position: (text.match(/Job title: (.*)/)?.[1] ?? "").trim(),
+    company: (text.match(/Company: (.*)/)?.[1] ?? "").trim(),
+    description: (text.match(/Description: ([\s\S]*)/)?.[1] ?? "").trim(),
+    startDate: new Date(
+      text.match(/Start date: (\d{4}-\d{2}-\d{2})/)?.[1] ?? "",
+    ),
+    endDate: new Date(text.match(/End date: (\d{4}-\d{2}-\d{2})/)?.[1] ?? ""),
+  } satisfies WorkExperience
 }

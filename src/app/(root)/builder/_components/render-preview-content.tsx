@@ -22,10 +22,7 @@ export function RenderPreviewContent({ className }: RenderPreviewContentProps) {
 
   return (
     <div
-      className={cn(
-        "w-full h-fit aspect-[210/297] bg-white text-black",
-        className,
-      )}
+      className={cn("w-full bg-white text-black", className)}
       ref={containerRef}
     >
       <div
@@ -153,7 +150,9 @@ function WorkExperienceSection({ resumeData }: RenderSectionProps) {
                 </span>
               )}
             </div>
-            <p className="text-xs font-semibold">{exp.company}</p>
+            <p className="text-xs font-semibold" style={{ color: colorHex }}>
+              {exp.company}
+            </p>
             <div className="whitespace-pre-line text-xs">{exp.description}</div>
           </div>
         ))}
@@ -193,7 +192,9 @@ function EducationSection({ resumeData }: RenderSectionProps) {
                 </span>
               )}
             </div>
-            <p className="text-xs font-semibold">{edu.school}</p>
+            <p className="text-xs font-semibold" style={{ color: colorHex }}>
+              {edu.school}
+            </p>
             <div className="whitespace-pre-line text-xs">{edu.description}</div>
           </div>
         ))}

@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 
 import { format } from "date-fns"
 import { CalendarIcon } from "lucide-react"
@@ -29,6 +29,12 @@ export function DatePicker({ value: defaultValue, onChange }: DatePickerProps) {
 
   const months = useMemo(generateMonths, [])
   const years = useMemo(generateYears, [])
+
+  useEffect(() => {
+    if (value !== defaultValue) {
+      setValue(defaultValue)
+    }
+  }, [value, defaultValue])
 
   return (
     <Popover>
