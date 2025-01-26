@@ -1,11 +1,13 @@
 "use client"
 
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 
 import { zodResolver } from "@hookform/resolvers/zod"
+import { WandSparklesIcon } from "lucide-react"
 import { useForm } from "react-hook-form"
 
-import { summarySchema, SummaryValues } from "@/lib/validation"
+import { ResumeValues, summarySchema, SummaryValues } from "@/lib/validation"
+import { useToast } from "@/hooks/use-toast"
 import {
   Form,
   FormControl,
@@ -15,15 +17,17 @@ import {
   FormMessage,
 } from "@/components/ui/form"
 import { Textarea } from "@/components/ui/textarea"
+import { LoadingButton } from "@/components/loading-button"
 
 import { useResumeData } from "../_context/_resume-data-context"
+import { generateSummary } from "../actions"
 
 export function SummaryForm() {
   const { resumeData, setResumeData } = useResumeData()
   const form = useForm<SummaryValues>({
     resolver: zodResolver(summarySchema),
     defaultValues: {
-      summary: "",
+      summary: resumeData.summary ?? "",
     },
   })
 
@@ -62,15 +66,64 @@ export function SummaryForm() {
                   <Textarea
                     {...field}
                     placeholder={`To uncover the truth behind paranormal phenomena, expose government conspiracies, and continue the pursuit of extraterrestrial intelligence while maintaining my belief that "The Truth is Out There."`}
-                    rows={5}
+                    rows={10}
                   />
                 </FormControl>
                 <FormMessage />
+                <GenerateSummaryButton
+                  resumeData={resumeData}
+                  onSummaryGenerated={(summary) =>
+                    form.setValue("summary", summary)
+                  }
+                />
               </FormItem>
             )}
           />
         </form>
       </Form>
     </div>
+  )
+}
+
+interface GenerateSummaryButtonProps {
+  resumeData: ResumeValues
+  onSummaryGenerated: (summary: string) => void
+}
+
+function GenerateSummaryButton({
+  resumeData,
+  onSummaryGenerated,
+}: GenerateSummaryButtonProps) {
+  const { toast } = useToast()
+  const [loading, setLoading] = useState(false)
+
+  async function handleClick() {
+    // TODO: Check user's premium status
+
+    try {
+      setLoading(true)
+      const aiResponse = await generateSummary(resumeData)
+      onSummaryGenerated(aiResponse)
+    } catch (e) {
+      console.error(e)
+      toast({
+        variant: "destructive",
+        description: "Something went wrong... Please try again.",
+      })
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  return (
+    <LoadingButton
+      type="button"
+      variant="outline"
+      icon={WandSparklesIcon}
+      loading={loading}
+      onClick={handleClick}
+    >
+      {loading ? "Generating..." : "Generate with AI"}
+    </LoadingButton>
   )
 }

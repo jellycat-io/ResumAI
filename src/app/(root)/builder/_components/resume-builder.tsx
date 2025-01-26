@@ -72,10 +72,7 @@ function ResumeBuilderContent() {
             {FormComponent && <FormComponent />}
           </section>
           <Separator orientation="vertical" className="grow" />
-          <RenderPreview
-            className={cn(showSmResumePreview && "flex")}
-            showDebug
-          />
+          <RenderPreview className={cn(showSmResumePreview && "flex")} />
         </div>
       </main>
       <Footer

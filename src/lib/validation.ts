@@ -91,6 +91,15 @@ export type ResumeValues = Omit<z.infer<typeof resumeSchema>, "photo"> & {
   photo?: File | string | null
 }
 
+export const generateSummarySchema = z.object({
+  jobTitle: optionalString,
+  ...workExperienceSchema.shape,
+  ...educationSchema.shape,
+  ...skillSchema.shape,
+})
+
+export type GenerateSummaryInput = z.infer<typeof generateSummarySchema>
+
 function isImageMimeType(type: Blob["type"]) {
   return type === "image/jpeg" || type === "image/png"
 }
