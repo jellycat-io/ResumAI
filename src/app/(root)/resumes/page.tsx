@@ -18,7 +18,7 @@ export default async function ResumesPage() {
   return (
     <main className="mx-auto w-full max-w-7xl space-y-6 p-6">
       <Button asChild className="mx-auto flex w-fit">
-        <Link href="/editor">
+        <Link href="/builder">
           <FilePlus2Icon className="size-4" />
           New resume
         </Link>
