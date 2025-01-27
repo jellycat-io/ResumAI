@@ -1,3 +1,5 @@
+"use client"
+
 import { useEffect, useRef, useState } from "react"
 import Image from "next/image"
 
@@ -8,21 +10,26 @@ import { ResumeValues } from "@/lib/validation"
 import { useDimensions } from "@/hooks/use-dimensions"
 import { Badge } from "@/components/ui/badge"
 
-import { useResumeData } from "../_context/_resume-data-context"
-import { BORDER_STYLES } from "./border-picker"
+import { BORDER_STYLES } from "../constants"
 
 interface RenderPreviewContentProps {
   className?: string
+  resumeData: ResumeValues
 }
 
-export function RenderPreviewContent({ className }: RenderPreviewContentProps) {
-  const { resumeData } = useResumeData()
+export function ResumePreview({
+  className,
+  resumeData,
+}: RenderPreviewContentProps) {
   const containerRef = useRef<HTMLDivElement>(null)
   const { width } = useDimensions(containerRef)
 
   return (
     <div
-      className={cn("w-full bg-white text-black", className)}
+      className={cn(
+        "w-full h-fit aspect-[210/297] bg-white text-black",
+        className,
+      )}
       ref={containerRef}
     >
       <div

@@ -3,9 +3,9 @@
 import { cn, fileReplacer } from "@/lib/utils"
 
 import { useResumeData } from "../_context/_resume-data-context"
+import { ResumePreview } from "../../_components/resume-preview"
 import { BorderPicker } from "./border-picker"
 import { ColorPicker } from "./color-picker"
-import { RenderPreviewContent } from "./render-preview-content"
 
 interface RenderPreviewProps {
   showDebug?: boolean
@@ -14,6 +14,7 @@ interface RenderPreviewProps {
 
 export function RenderPreview({ showDebug, className }: RenderPreviewProps) {
   const { resumeData } = useResumeData()
+
   return (
     <section
       className={cn("group relative hidden w-full md:w-1/2 md:flex", className)}
@@ -22,13 +23,16 @@ export function RenderPreview({ showDebug, className }: RenderPreviewProps) {
         <ColorPicker />
         <BorderPicker />
       </div>
-      <div className="flex w-full flex-col items-center overflow-y-auto bg-secondary p-3">
+      <div className="flex w-full justify-center overflow-y-auto bg-secondary p-3">
         {showDebug && (
           <pre className="w-full bg-background text-foreground p-3 rounded-md mb-3">
             {JSON.stringify(resumeData, fileReplacer, 2)}
           </pre>
         )}
-        <RenderPreviewContent className="max-w-2xl shadow-md" />
+        <ResumePreview
+          className="max-w-2xl shadow-md"
+          resumeData={resumeData}
+        />
       </div>
     </section>
   )

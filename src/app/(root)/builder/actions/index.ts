@@ -117,7 +117,7 @@ export async function generateSummary(input: GenerateSummaryInput) {
 
   const systemMessage = `
     You are a job resume generator AI. Your task is to write a professionnal introduction summary for a resume given the user's provided data.
-    Only return the summary and do not include any other information in the response. Keep it concise and professional.
+    Only return the summary and do not include any other information in the response. Keep it concise, professional, first-person, and as if the user wrote it themselves.
   `
 
   const prompt = `

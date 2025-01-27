@@ -5,12 +5,7 @@ import { CircleIcon, SquareIcon, SquircleIcon } from "lucide-react"
 import { Button } from "@/components/ui/button"
 
 import { useResumeData } from "../_context/_resume-data-context"
-
-export const BORDER_STYLES = {
-  SQUARE: "square",
-  CIRCLE: "circle",
-  SQUIRCLE: "squircle",
-}
+import { BORDER_STYLES } from "../../constants"
 
 const borderStyles = Object.values(BORDER_STYLES)
 
