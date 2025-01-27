@@ -1,10 +1,11 @@
 "use client"
 
-import { useTransition } from "react"
+import { useRef, useTransition } from "react"
 import Link from "next/link"
 
 import { formatDate } from "date-fns"
-import { MoreHorizontalIcon, Trash2Icon } from "lucide-react"
+import { MoreHorizontalIcon, PrinterIcon, Trash2Icon } from "lucide-react"
+import { useReactToPrint } from "react-to-print"
 
 import { toResumeValues } from "@/lib/mappings"
 import { ResumeServerData } from "@/lib/types"
@@ -37,12 +38,17 @@ interface ResumeItemProps {
 }
 
 export function ResumeItem({ resume }: ResumeItemProps) {
+  const contentRef = useRef<HTMLDivElement>(null)
+  const reactToPrint = useReactToPrint({
+    contentRef,
+    documentTitle: resume.title ?? "Resume",
+  })
   const wasUpdated = resume.updatedAt !== resume.createdAt
 
   return (
     <div className="group relative border hover:ring-1 hover:ring-ring rounded-lg transition-colors p-3">
       <div className="absolute top-1 right-1 flex items-center justify-center opacity-0 group-hover:opacity-100">
-        <MoreMenu resumeId={resume.id} />
+        <MoreMenu resumeId={resume.id} onPrintClick={reactToPrint} />
       </div>
       <div className="space-y-3">
         <Link
@@ -66,6 +72,7 @@ export function ResumeItem({ resume }: ResumeItemProps) {
           <ResumePreview
             resumeData={toResumeValues(resume)}
             className="w-full overflow-hidden shadow-sm transition-shadow group-hover:shadow-lg"
+            contentRef={contentRef}
           />
           <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-white to-transparent" />
         </Link>
@@ -74,7 +81,12 @@ export function ResumeItem({ resume }: ResumeItemProps) {
   )
 }
 
-function MoreMenu({ resumeId }: { resumeId: string }) {
+interface MoreMenuProps {
+  resumeId: string
+  onPrintClick: () => void
+}
+
+function MoreMenu({ resumeId, onPrintClick }: MoreMenuProps) {
   const { toast } = useToast()
   const [isPending, startTransition] = useTransition()
 
@@ -100,8 +112,12 @@ function MoreMenu({ resumeId }: { resumeId: string }) {
             <MoreHorizontalIcon className="size-4" />
           </Button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent asChild>
-          <AlertDialogTrigger>
+        <DropdownMenuContent>
+          <DropdownMenuItem onClick={onPrintClick}>
+            <PrinterIcon className="size-4" />
+            Print
+          </DropdownMenuItem>
+          <AlertDialogTrigger asChild>
             <DropdownMenuItem className="text-destructive cursor-pointer">
               <Trash2Icon className="size-4" />
               Delete

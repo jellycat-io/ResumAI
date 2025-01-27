@@ -12,15 +12,17 @@ import { Badge } from "@/components/ui/badge"
 
 import { BORDER_STYLES } from "../constants"
 
-interface RenderPreviewContentProps {
+interface ResumePreviewProps {
   className?: string
   resumeData: ResumeValues
+  contentRef?: React.Ref<HTMLDivElement>
 }
 
 export function ResumePreview({
   className,
   resumeData,
-}: RenderPreviewContentProps) {
+  contentRef,
+}: ResumePreviewProps) {
   const containerRef = useRef<HTMLDivElement>(null)
   const { width } = useDimensions(containerRef)
 
@@ -37,6 +39,8 @@ export function ResumePreview({
         style={{
           zoom: (1 / 794) * width,
         }}
+        ref={contentRef}
+        id="resumePreviewContent"
       >
         <PersonalInfoHeader resumeData={resumeData} />
         <SummarySection resumeData={resumeData} />
@@ -48,11 +52,11 @@ export function ResumePreview({
   )
 }
 
-interface RenderSectionProps {
+interface ResumePreviewSectionProps {
   resumeData: ResumeValues
 }
 
-function PersonalInfoHeader({ resumeData }: RenderSectionProps) {
+function PersonalInfoHeader({ resumeData }: ResumePreviewSectionProps) {
   const {
     photo,
     firstName,
@@ -112,7 +116,7 @@ function PersonalInfoHeader({ resumeData }: RenderSectionProps) {
   )
 }
 
-function SummarySection({ resumeData }: RenderSectionProps) {
+function SummarySection({ resumeData }: ResumePreviewSectionProps) {
   const { summary } = resumeData
 
   if (!summary) return null
@@ -127,7 +131,7 @@ function SummarySection({ resumeData }: RenderSectionProps) {
   )
 }
 
-function WorkExperienceSection({ resumeData }: RenderSectionProps) {
+function WorkExperienceSection({ resumeData }: ResumePreviewSectionProps) {
   const { workExperiences, colorHex } = resumeData
 
   const filledWorkExperiences = getFilledArray(workExperiences)
@@ -168,7 +172,7 @@ function WorkExperienceSection({ resumeData }: RenderSectionProps) {
   )
 }
 
-function EducationSection({ resumeData }: RenderSectionProps) {
+function EducationSection({ resumeData }: ResumePreviewSectionProps) {
   const { educations, colorHex } = resumeData
 
   const filledEducations = getFilledArray(educations)
@@ -210,7 +214,7 @@ function EducationSection({ resumeData }: RenderSectionProps) {
   )
 }
 
-function SkillsSection({ resumeData }: RenderSectionProps) {
+function SkillsSection({ resumeData }: ResumePreviewSectionProps) {
   const { skills, colorHex, borderStyle } = resumeData
 
   if (!skills?.length) return
