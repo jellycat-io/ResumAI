@@ -32,7 +32,7 @@ export function HomeContent() {
       />
       <h1 className="text-4xl font-extrabold tracking-light lg:text-5xl scroll-m-20">
         Create a{" "}
-        <span className="bg-gradient-to-r text-transparent from-blue-500 to-purple-500 bg-clip-text">
+        <span className="bg-gradient-to-r text-transparent from-blue-600 to-blue-400 bg-clip-text">
           Perfect Resume
         </span>{" "}
         in Minutes
