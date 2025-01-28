@@ -21,10 +21,9 @@ export function Navbar() {
     <nav className="w-full px-4 py-2 border-b">
       <div className="max-w-7xl mx-auto flex items-center justify-between">
         <div className="relative group cursor-pointer px-4">
-          <div className="absolute inset-0 bg-gradient-to-r from-blue-500/60 to-purple-500/60 dark:from-blue-500/30 dark:to-purple-500/30 blur-xl opacity-0 group-hover:opacity-100 duration-300 transition-all" />
-          <Link href="/">
+          <div className="absolute inset-0 bg-gradient-to-r from-blue-500/60 to-purple-500/60 dark:from-blue-500/30 dark:to-purple-500/30 blur-xl opacity-0 group-hover:opacity-100 duration-300 transition-all pointer-events-none" />
+          <Link href="/resumes">
             <Image
-              suppressHydrationWarning
               src={`/logo-${logoColor}.png`}
               alt="logo"
               width={500}
