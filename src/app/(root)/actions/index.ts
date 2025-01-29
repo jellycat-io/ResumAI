@@ -1,5 +1,6 @@
 "use server"
 
+import { db } from "@/server/db"
 import { currentUser } from "@clerk/nextjs/server"
 
 import { env } from "@/lib/env"
@@ -43,4 +44,26 @@ export async function createCheckoutSession(priceId: string) {
   if (!session.url) throw new Error("Failed to crerate checkout session")
 
   return session.url
+}
+
+export async function getSubscription() {
+  const user = await currentUser()
+  if (!user) throw new Error("Unauthorized")
+
+  const subscription = await db.userSubscription.findUnique({
+    where: {
+      userId: user.id,
+    },
+  })
+
+  const priceInfo = subscription
+    ? await stripe.prices.retrieve(subscription?.stripePriceId, {
+        expand: ["product"],
+      })
+    : null
+
+  return {
+    subscription,
+    priceInfo,
+  }
 }

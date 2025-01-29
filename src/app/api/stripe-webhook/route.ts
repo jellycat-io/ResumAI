@@ -22,8 +22,6 @@ export async function POST(req: NextRequest) {
       env.STRIPE_WEBHOOK_SECRET,
     )
 
-    console.log(`Received event: ${event.type}`, event.data.object)
-
     switch (event.type) {
       case "checkout.session.completed":
         await handleSessionCompleted(event.data.object)
@@ -61,7 +59,6 @@ async function handleSessionCompleted(session: Stripe.Checkout.Session) {
 
 async function handleSubscriptionCreatedOrUpdated(subscriptionId: string) {
   const subscription = await stripe.subscriptions.retrieve(subscriptionId)
-  console.log("userId", subscription.metadata.userId)
 
   if (["active", "trialing", "past_due"].includes(subscription.status)) {
     await db.userSubscription.upsert({
