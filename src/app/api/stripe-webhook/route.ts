@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server"
+import { NextRequest } from "next/server"
 
 import { clerkClient } from "@clerk/nextjs/server"
 import Stripe from "stripe"
@@ -12,7 +12,7 @@ export async function POST(req: NextRequest) {
     const signature = req.headers.get("stripe-signature")
 
     if (!signature) {
-      return new NextResponse("Signature is missing", { status: 400 })
+      return new Response("Signature is missing", { status: 400 })
     }
 
     const event = stripe.webhooks.constructEvent(
@@ -38,10 +38,10 @@ export async function POST(req: NextRequest) {
         console.warn(`Unhandled event type: ${event.type}`)
     }
 
-    return new NextResponse("Event received", { status: 200 })
+    return new Response("Event received", { status: 200 })
   } catch (e) {
     console.error(e)
-    return new NextResponse("Internal server error", { status: 500 })
+    return new Response("Internal server error", { status: 500 })
   }
 }
 
