@@ -43,7 +43,7 @@ export function HomeContent() {
         chore.
       </p>
       <Button asChild size="lg" variant="premium">
-        <Link href="/builder">Get started</Link>
+        <Link href="/resumes">Get started</Link>
       </Button>
     </main>
   )

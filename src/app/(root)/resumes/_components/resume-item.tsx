@@ -1,6 +1,6 @@
 "use client"
 
-import { useRef, useTransition } from "react"
+import { useRef, useState, useTransition } from "react"
 import Link from "next/link"
 
 import { formatDate } from "date-fns"
@@ -19,7 +19,6 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-  AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
 import { Button } from "@/components/ui/button"
 import {
@@ -87,6 +86,8 @@ interface MoreMenuProps {
 }
 
 function MoreMenu({ resumeId, onPrintClick }: MoreMenuProps) {
+  const [confirmDialogOpen, setConfirmDialogOpen] = useState(false)
+  const [menuOpen, setMenuOpen] = useState(false)
   const { toast } = useToast()
   const [isPending, startTransition] = useTransition()
 
@@ -94,6 +95,7 @@ function MoreMenu({ resumeId, onPrintClick }: MoreMenuProps) {
     startTransition(async () => {
       try {
         await deleteResume(resumeId)
+        setConfirmDialogOpen(false)
       } catch (e) {
         console.error(e)
         toast({
@@ -105,8 +107,8 @@ function MoreMenu({ resumeId, onPrintClick }: MoreMenuProps) {
   }
 
   return (
-    <AlertDialog>
-      <DropdownMenu>
+    <AlertDialog open={confirmDialogOpen} onOpenChange={setConfirmDialogOpen}>
+      <DropdownMenu open={menuOpen} onOpenChange={setMenuOpen}>
         <DropdownMenuTrigger asChild>
           <Button variant="ghost" size="icon">
             <MoreHorizontalIcon className="size-4" />
@@ -117,12 +119,16 @@ function MoreMenu({ resumeId, onPrintClick }: MoreMenuProps) {
             <PrinterIcon className="size-4" />
             Print
           </DropdownMenuItem>
-          <AlertDialogTrigger asChild>
-            <DropdownMenuItem className="text-destructive cursor-pointer">
-              <Trash2Icon className="size-4" />
-              Delete
-            </DropdownMenuItem>
-          </AlertDialogTrigger>
+          <DropdownMenuItem
+            className="text-destructive cursor-pointer"
+            onClick={() => {
+              setMenuOpen(false)
+              setConfirmDialogOpen(true)
+            }}
+          >
+            <Trash2Icon className="size-4" />
+            Delete
+          </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
       <AlertDialogContent>

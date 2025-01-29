@@ -20,7 +20,7 @@ export default async function BillingPage() {
       <p>
         Your current plan:{" "}
         <span className="font-bold">
-          {priceInfo ? (priceInfo.product as Stripe.Product).name : "free"}
+          {priceInfo ? (priceInfo.product as Stripe.Product).name : "Free"}
         </span>
       </p>
       {subscription ? (
