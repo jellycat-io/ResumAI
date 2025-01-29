@@ -1,5 +1,6 @@
 import { NextRequest } from "next/server"
 
+import { db } from "@/server/db"
 import { clerkClient } from "@clerk/nextjs/server"
 import Stripe from "stripe"
 
@@ -59,9 +60,43 @@ async function handleSessionCompleted(session: Stripe.Checkout.Session) {
 }
 
 async function handleSubscriptionCreatedOrUpdated(subscriptionId: string) {
-  console.log("handleSubscriptionCreatedOrUpdated")
+  const subscription = await stripe.subscriptions.retrieve(subscriptionId)
+  console.log("userId", subscription.metadata.userId)
+
+  if (["active", "trialing", "past_due"].includes(subscription.status)) {
+    await db.userSubscription.upsert({
+      where: { userId: subscription.metadata.userId },
+      create: {
+        userId: subscription.metadata.userId,
+        stripeSubscriptionId: subscription.id,
+        stripeCustomerId: subscription.customer as string,
+        stripePriceId: subscription.items.data[0].price.id,
+        stripeCurrentPeriodEnd: new Date(
+          subscription.current_period_end * 1000,
+        ),
+        stripeCancelAtPeriodEnd: subscription.cancel_at_period_end,
+      },
+      update: {
+        stripePriceId: subscription.items.data[0].price.id,
+        stripeCurrentPeriodEnd: new Date(
+          subscription.current_period_end * 1000,
+        ),
+        stripeCancelAtPeriodEnd: subscription.cancel_at_period_end,
+      },
+    })
+  } else {
+    await db.userSubscription.deleteMany({
+      where: {
+        stripeCustomerId: subscription.customer as string,
+      },
+    })
+  }
 }
 
 async function handleSubscriptionDeleted(subscription: Stripe.Subscription) {
-  console.log("handleSubscriptionDeleted")
+  await db.userSubscription.deleteMany({
+    where: {
+      stripeCustomerId: subscription.customer as string,
+    },
+  })
 }
