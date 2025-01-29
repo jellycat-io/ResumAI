@@ -17,7 +17,7 @@ import {
 } from "@/components/ui/form"
 import { Textarea } from "@/components/ui/textarea"
 
-import { useResumeData } from "../_context/_resume-data-context"
+import { useResumeData } from "../_contexts/resume-data-context"
 
 export function SkillForm() {
   const { resumeData, setResumeData } = useResumeData()

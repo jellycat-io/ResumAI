@@ -11,7 +11,7 @@ import { Separator } from "@/components/ui/separator"
 import {
   ResumeDataProvider,
   useResumeData,
-} from "../_context/_resume-data-context"
+} from "../_contexts/resume-data-context"
 import { useAutoSaveResume } from "../_hooks/use-autosave-resume"
 import { BUILDER_STEPS } from "../steps"
 import { Breadcrumbs } from "./breadcrumbs"

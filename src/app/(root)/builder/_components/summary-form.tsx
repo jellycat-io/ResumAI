@@ -6,7 +6,9 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { WandSparklesIcon } from "lucide-react"
 import { useForm } from "react-hook-form"
 
+import { canUseAITools } from "@/lib/permissions"
 import { ResumeValues, summarySchema, SummaryValues } from "@/lib/validation"
+import { usePremiumDialog } from "@/hooks/use-premium-dialog"
 import { useToast } from "@/hooks/use-toast"
 import {
   Form,
@@ -19,7 +21,8 @@ import {
 import { Textarea } from "@/components/ui/textarea"
 import { LoadingButton } from "@/components/loading-button"
 
-import { useResumeData } from "../_context/_resume-data-context"
+import { useResumeData } from "../_contexts/resume-data-context"
+import { useSubscriptionLevel } from "../../_contexts/subscription-level-context"
 import { generateSummary } from "../actions"
 
 export function SummaryForm() {
@@ -96,9 +99,14 @@ function GenerateSummaryButton({
 }: GenerateSummaryButtonProps) {
   const { toast } = useToast()
   const [loading, setLoading] = useState(false)
+  const subscriptionLevel = useSubscriptionLevel()
+  const { setPremiumDialogOpen } = usePremiumDialog()
 
   async function handleClick() {
-    // TODO: Check user's premium status
+    if (!canUseAITools(subscriptionLevel)) {
+      setPremiumDialogOpen(true)
+      return
+    }
 
     try {
       setLoading(true)

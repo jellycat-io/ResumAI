@@ -18,7 +18,7 @@ import {
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 
-import { useResumeData } from "../_context/_resume-data-context"
+import { useResumeData } from "../_contexts/resume-data-context"
 
 export function GeneralInfoForm() {
   const { resumeData, setResumeData } = useResumeData()

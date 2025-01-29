@@ -12,7 +12,7 @@ interface CreateResumeButtonProps {
 }
 
 export function CreateResumeButton({ canCreate }: CreateResumeButtonProps) {
-  const { setOpen } = usePremiumDialog()
+  const { setPremiumDialogOpen } = usePremiumDialog()
 
   if (canCreate) {
     return (
@@ -26,7 +26,10 @@ export function CreateResumeButton({ canCreate }: CreateResumeButtonProps) {
   }
 
   return (
-    <Button className="mx-auto flex w-fit" onClick={() => setOpen(true)}>
+    <Button
+      className="mx-auto flex w-fit"
+      onClick={() => setPremiumDialogOpen(true)}
+    >
       <FilePlus2Icon className="size-4" />
       New Resume
     </Button>

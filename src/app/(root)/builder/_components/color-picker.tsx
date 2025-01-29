@@ -1,8 +1,12 @@
 "use client"
 
+import { useState } from "react"
+
 import { PaintbrushIcon } from "lucide-react"
 
+import { canUseCustomization } from "@/lib/permissions"
 import { cn } from "@/lib/utils"
+import { usePremiumDialog } from "@/hooks/use-premium-dialog"
 import { Button } from "@/components/ui/button"
 import {
   Popover,
@@ -10,15 +14,30 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover"
 
-import { useResumeData } from "../_context/_resume-data-context"
+import { useResumeData } from "../_contexts/resume-data-context"
+import { useSubscriptionLevel } from "../../_contexts/subscription-level-context"
 import { COLORS } from "../../constants"
 
 export function ColorPicker() {
+  const [open, setOpen] = useState(false)
   const { resumeData, setResumeData } = useResumeData()
+  const subscriptionLevel = useSubscriptionLevel()
+  const { setPremiumDialogOpen } = usePremiumDialog()
+
   return (
-    <Popover>
+    <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
-        <Button variant="outline" size="icon">
+        <Button
+          variant="outline"
+          size="icon"
+          onClick={() => {
+            if (canUseCustomization(subscriptionLevel)) {
+              setOpen(true)
+            } else {
+              setPremiumDialogOpen(true)
+            }
+          }}
+        >
           <PaintbrushIcon className="size-4" />
           <span className="sr-only">Color Picker</span>
         </Button>

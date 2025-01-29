@@ -8,6 +8,12 @@ import { auth } from "@clerk/nextjs/server"
 import { del, put } from "@vercel/blob"
 import { generateText } from "ai"
 
+import {
+  canCreateResume,
+  canUseAITools,
+  canUseCustomization,
+} from "@/lib/permissions"
+import { getUserSubscriptionLevel } from "@/lib/subscription"
 import { resumeDataInclude } from "@/lib/types"
 import {
   GenerateSummaryInput,
@@ -41,7 +47,19 @@ export async function saveResume(values: ResumeValues) {
   const { photo, workExperiences, educations, ...resumeValues } =
     resumeSchema.parse(values)
 
-  // TODO: Check resume count for non-premium users
+  const subscriptionLevel = await getUserSubscriptionLevel(userId)
+
+  if (!id) {
+    const resumeCount = await db.resume.count({
+      where: { userId },
+    })
+
+    if (!canCreateResume(subscriptionLevel, resumeCount)) {
+      throw new Error(
+        "Maximum resume count reached for this subscription level.",
+      )
+    }
+  }
 
   const existingResume = id
     ? await db.resume.findUnique({
@@ -49,6 +67,16 @@ export async function saveResume(values: ResumeValues) {
       })
     : null
   if (id && !existingResume) throw new Error("Resume not found")
+
+  const hasCustomizations =
+    (resumeValues.borderStyle &&
+      resumeValues.borderStyle !== existingResume?.borderStyle) ||
+    (resumeValues.colorHex &&
+      resumeValues.colorHex !== existingResume?.colorHex)
+
+  if (hasCustomizations && !canUseCustomization(subscriptionLevel)) {
+    throw new Error("Customizations not allowed for this subscription level.")
+  }
 
   let newPhotoUrl: string | undefined | null = undefined
   if (photo instanceof File) {
@@ -110,7 +138,10 @@ export async function generateSummary(input: GenerateSummaryInput) {
   const { userId } = await auth()
   if (!userId) throw new Error("Unauthorized")
 
-  // TODO: Check for user's premium status
+  const subscriptionLevel = await getUserSubscriptionLevel(userId)
+
+  if (!canUseAITools(subscriptionLevel))
+    throw new Error("AI tools unavailable with this subscription level.")
 
   const { jobTitle, workExperiences, educations, skills } =
     generateSummarySchema.parse(input)
@@ -175,7 +206,10 @@ export async function generateWorkExperience(
   const { userId } = await auth()
   if (!userId) throw new Error("Unauthorized")
 
-  // TODO: Check for user's premium status
+  const subscriptionLevel = await getUserSubscriptionLevel(userId)
+
+  if (!canUseAITools(subscriptionLevel))
+    throw new Error("AI tools unavailable with this subscription level.")
 
   const { description, skills } = generateWorkExperienceSchema.parse(input)
 

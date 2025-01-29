@@ -19,7 +19,7 @@ import {
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 
-import { useResumeData } from "../_context/_resume-data-context"
+import { useResumeData } from "../_contexts/resume-data-context"
 
 export function PersonalInfoForm() {
   const { resumeData, setResumeData } = useResumeData()

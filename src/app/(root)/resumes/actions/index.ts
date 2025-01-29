@@ -6,16 +6,18 @@ import { db } from "@/server/db"
 import { auth } from "@clerk/nextjs/server"
 import { del } from "@vercel/blob"
 
+import { getUserSubscriptionLevel, SubscriptionLevel } from "@/lib/subscription"
 import { resumeDataInclude, ResumeServerData } from "@/lib/types"
 
 export async function getResumeSummaries(): Promise<{
   resumes: ResumeServerData[]
   totalCount: number
+  subscriptionLevel: SubscriptionLevel
 }> {
   const { userId } = await auth()
   if (!userId) throw new Error("Unauthorized")
 
-  const [resumes, totalCount] = await Promise.all([
+  const [resumes, totalCount, subscriptionLevel] = await Promise.all([
     db.resume.findMany({
       where: { userId },
       orderBy: {
@@ -26,11 +28,13 @@ export async function getResumeSummaries(): Promise<{
     db.resume.count({
       where: { userId },
     }),
+    getUserSubscriptionLevel(userId),
   ])
 
   return {
     resumes,
     totalCount,
+    subscriptionLevel,
   }
 }
 

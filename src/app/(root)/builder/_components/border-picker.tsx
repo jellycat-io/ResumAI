@@ -2,18 +2,28 @@
 
 import { CircleIcon, SquareIcon, SquircleIcon } from "lucide-react"
 
+import { canUseCustomization } from "@/lib/permissions"
+import { usePremiumDialog } from "@/hooks/use-premium-dialog"
 import { Button } from "@/components/ui/button"
 
-import { useResumeData } from "../_context/_resume-data-context"
+import { useResumeData } from "../_contexts/resume-data-context"
+import { useSubscriptionLevel } from "../../_contexts/subscription-level-context"
 import { BORDER_STYLES } from "../../constants"
 
 const borderStyles = Object.values(BORDER_STYLES)
 
 export function BorderPicker() {
+  const subscriptionLevel = useSubscriptionLevel()
+  const { setPremiumDialogOpen } = usePremiumDialog()
   const { resumeData, setResumeData } = useResumeData()
   const { borderStyle } = resumeData
 
   function handleClick() {
+    if (!canUseCustomization(subscriptionLevel)) {
+      setPremiumDialogOpen(true)
+      return
+    }
+
     const currentIndex = borderStyle ? borderStyles.indexOf(borderStyle) : 0
     const nextIndex = (currentIndex + 1) % borderStyles.length
 

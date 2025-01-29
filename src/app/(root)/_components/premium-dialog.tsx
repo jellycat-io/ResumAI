@@ -4,6 +4,7 @@ import { useState } from "react"
 
 import { CheckIcon } from "lucide-react"
 
+import { env } from "@/lib/env"
 import { usePremiumDialog } from "@/hooks/use-premium-dialog"
 import { useToast } from "@/hooks/use-toast"
 import {
@@ -27,7 +28,7 @@ const PREMIUM_PLUS_FEATURES = [
 
 export function PremiumDialog() {
   const [loading, setLoading] = useState(false)
-  const { open, setOpen } = usePremiumDialog()
+  const { openPremiumDialog, setPremiumDialogOpen } = usePremiumDialog()
   const { toast } = useToast()
 
   async function handlePremiumClick(priceId: string) {
@@ -48,10 +49,10 @@ export function PremiumDialog() {
 
   return (
     <Dialog
-      open={open}
+      open={openPremiumDialog}
       onOpenChange={(open) => {
         if (!loading) {
-          setOpen(open)
+          setPremiumDialogOpen(open)
         }
       }}
     >
@@ -80,7 +81,7 @@ export function PremiumDialog() {
                 loading={loading}
                 onClick={() =>
                   handlePremiumClick(
-                    process.env.NEXT_PUBLIC_STRIPE_PRICE_ID_PREMIUM_MONTHLY!,
+                    env.NEXT_PUBLIC_STRIPE_PRICE_ID_PREMIUM_MONTHLY,
                   )
                 }
               >
@@ -107,8 +108,7 @@ export function PremiumDialog() {
                 loading={loading}
                 onClick={() =>
                   handlePremiumClick(
-                    process.env
-                      .NEXT_PUBLIC_STRIPE_PRICE_ID_PREMIUM_PLUS_MONTHLY!,
+                    env.NEXT_PUBLIC_STRIPE_PRICE_ID_PREMIUM_PLUS_MONTHLY,
                   )
                 }
               >

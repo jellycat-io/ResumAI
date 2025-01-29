@@ -10,7 +10,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
+  url      = env("POSTGRES_PRISMA_URL")
 }
 
 model Resume {
@@ -33,40 +33,55 @@ model Resume {
   updatedAt   DateTime @updatedAt
 
   workExperiences WorkExperience[]
-  educations Education[]
-  skills String[]
+  educations      Education[]
+  skills          String[]
 
   @@map("resumes")
 }
 
 model WorkExperience {
-  id String @id @default(cuid())
-  position String?
-  company String?
-  startDate DateTime?
-  endDate DateTime?
+  id          String    @id @default(cuid())
+  position    String?
+  company     String?
+  startDate   DateTime?
+  endDate     DateTime?
   description String?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
 
   resumeId String
-  resume Resume @relation(fields: [resumeId], references: [id], onDelete: Cascade)
+  resume   Resume @relation(fields: [resumeId], references: [id], onDelete: Cascade)
 
   @@map("workExperiences")
 }
 
 model Education {
-  id String @id @default(cuid())
-  degree String?
-  school String?
-  startDate DateTime?
-  endDate DateTime?
+  id          String    @id @default(cuid())
+  degree      String?
+  school      String?
+  startDate   DateTime?
+  endDate     DateTime?
   description String?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
 
   resumeId String
-  resume Resume @relation(fields: [resumeId], references: [id], onDelete: Cascade)
+  resume   Resume @relation(fields: [resumeId], references: [id], onDelete: Cascade)
 
   @@map("educations")
+}
+
+model UserSubscription {
+  id                      String   @id @default(cuid())
+  userId                  String   @unique
+  stripeCustomerId        String   @unique
+  stripeSubscriptionId    String   @unique
+  stripePriceId           String
+  stripeCurrentPeriodEnd  DateTime
+  stripeCancelAtPeriodEnd Boolean  @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("user_subscriptions")
 }

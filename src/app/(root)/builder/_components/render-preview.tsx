@@ -2,7 +2,7 @@
 
 import { cn, fileReplacer } from "@/lib/utils"
 
-import { useResumeData } from "../_context/_resume-data-context"
+import { useResumeData } from "../_contexts/resume-data-context"
 import { ResumePreview } from "../../_components/resume-preview"
 import { BorderPicker } from "./border-picker"
 import { ColorPicker } from "./color-picker"

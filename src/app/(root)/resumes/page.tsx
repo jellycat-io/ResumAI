@@ -1,5 +1,7 @@
 import { Metadata } from "next"
 
+import { canCreateResume } from "@/lib/permissions"
+
 import { CreateResumeButton } from "./_components/create-resume-button"
 import { ResumeItem } from "./_components/resume-item"
 import { getResumeSummaries } from "./actions"
@@ -9,11 +11,13 @@ export const metadata: Metadata = {
 }
 
 export default async function ResumesPage() {
-  const { resumes, totalCount } = await getResumeSummaries()
+  const { resumes, totalCount, subscriptionLevel } = await getResumeSummaries()
 
   return (
     <main className="mx-auto w-full max-w-7xl space-y-6 p-6">
-      <CreateResumeButton canCreate={totalCount < 3} />
+      <CreateResumeButton
+        canCreate={canCreateResume(subscriptionLevel, totalCount)}
+      />
       <div className="space-y-1">
         <h1 className="text-3xl font-bold">Your resumes</h1>
         <p>Total: {totalCount}</p>

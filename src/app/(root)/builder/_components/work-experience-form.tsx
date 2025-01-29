@@ -29,6 +29,7 @@ import {
 } from "lucide-react"
 import { useFieldArray, useForm, UseFormReturn } from "react-hook-form"
 
+import { canUseAITools } from "@/lib/permissions"
 import { cn } from "@/lib/utils"
 import {
   GenerateWorkExperienceInput,
@@ -37,6 +38,7 @@ import {
   workExperienceSchema,
   WorkExperienceValues,
 } from "@/lib/validation"
+import { usePremiumDialog } from "@/hooks/use-premium-dialog"
 import { toast } from "@/hooks/use-toast"
 import { Button } from "@/components/ui/button"
 import {
@@ -46,7 +48,6 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog"
 import {
   Form,
@@ -62,7 +63,8 @@ import { Textarea } from "@/components/ui/textarea"
 import { DatePicker } from "@/components/date-picker"
 import { LoadingButton } from "@/components/loading-button"
 
-import { useResumeData } from "../_context/_resume-data-context"
+import { useResumeData } from "../_contexts/resume-data-context"
+import { useSubscriptionLevel } from "../../_contexts/subscription-level-context"
 import { generateWorkExperience } from "../actions"
 
 export function WorkExperienceForm() {
@@ -212,7 +214,7 @@ function WorkExperienceItem({
       <div className="flex justify-between items-center gap-2">
         <div className="flex items-center gap-2">
           <span className="font-semibold">Work experience {index + 1}</span>
-          <GenerateWorkExperienceButton
+          <GenerateWorkExperienceDialog
             onWorkExperienceGenerated={handleGenerateWorkExperience}
           />
         </div>
@@ -313,15 +315,17 @@ function WorkExperienceItem({
   )
 }
 
-interface GenerateWorkExperienceButtonProps {
+interface GenerateWorkExperienceDialogProps {
   onWorkExperienceGenerated: (workExperience: WorkExperience) => void
 }
 
-function GenerateWorkExperienceButton({
+function GenerateWorkExperienceDialog({
   onWorkExperienceGenerated,
-}: GenerateWorkExperienceButtonProps) {
+}: GenerateWorkExperienceDialogProps) {
   const [showDialog, setShowDialog] = useState(false)
   const [loading, setLoading] = useState(false)
+  const subscriptionLevel = useSubscriptionLevel()
+  const { setPremiumDialogOpen } = usePremiumDialog()
 
   const form = useForm<GenerateWorkExperienceInput>({
     resolver: zodResolver(generateWorkExperienceSchema),
@@ -349,64 +353,71 @@ function GenerateWorkExperienceButton({
   }
 
   return (
-    <Dialog open={showDialog} onOpenChange={setShowDialog}>
-      <DialogTrigger asChild>
-        <Button
-          type="button"
-          variant="ghost"
-          size="icon"
-          title="Generate with AI"
-        >
-          <WandSparklesIcon className="size-4" />
-        </Button>
-      </DialogTrigger>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>Generate work experience</DialogTitle>
-          <DialogDescription>
-            Describe this work experience and the AI will generate an optimized
-            entry for you.
-          </DialogDescription>
-        </DialogHeader>
-        <Form {...form}>
-          <form className="space-y-3" onSubmit={form.handleSubmit(onSubmit)}>
-            <FormField
-              control={form.control}
-              name="description"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Description</FormLabel>
-                  <FormControl>
-                    <Textarea {...field} rows={5} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="skills"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Skills</FormLabel>
-                  <FormControl>
-                    <Input {...field} />
-                  </FormControl>
-                  <FormMessage />
-                  <FormDescription>
-                    Separate each skill with a comma.
-                  </FormDescription>
-                </FormItem>
-              )}
-            />
-            <DialogFooter>
-              <LoadingButton icon={WandSparklesIcon} loading={loading}>
-                {loading ? "Generating..." : "Generate"}
-              </LoadingButton>
-            </DialogFooter>
-          </form>
-        </Form>
-      </DialogContent>
-    </Dialog>
+    <>
+      <Button
+        type="button"
+        variant="ghost"
+        size="icon"
+        title="Generate with AI"
+        onClick={() => {
+          if (canUseAITools(subscriptionLevel)) {
+            setShowDialog(true)
+          } else {
+            setPremiumDialogOpen(true)
+          }
+        }}
+      >
+        <WandSparklesIcon className="size-4" />
+      </Button>
+      <Dialog open={showDialog} onOpenChange={setShowDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Generate work experience</DialogTitle>
+            <DialogDescription>
+              Describe this work experience and the AI will generate an
+              optimized entry for you.
+            </DialogDescription>
+          </DialogHeader>
+          <Form {...form}>
+            <form className="space-y-3" onSubmit={form.handleSubmit(onSubmit)}>
+              <FormField
+                control={form.control}
+                name="description"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Description</FormLabel>
+                    <FormControl>
+                      <Textarea {...field} rows={5} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="skills"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Skills</FormLabel>
+                    <FormControl>
+                      <Input {...field} />
+                    </FormControl>
+                    <FormMessage />
+                    <FormDescription>
+                      Separate each skill with a comma.
+                    </FormDescription>
+                  </FormItem>
+                )}
+              />
+              <DialogFooter>
+                <LoadingButton icon={WandSparklesIcon} loading={loading}>
+                  {loading ? "Generating..." : "Generate"}
+                </LoadingButton>
+              </DialogFooter>
+            </form>
+          </Form>
+        </DialogContent>
+      </Dialog>
+    </>
   )
 }
